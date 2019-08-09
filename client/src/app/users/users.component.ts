@@ -1,0 +1,200 @@
+import { Component, OnInit } from '@angular/core';
+import { routerTransition } from '../router.animations';
+import { RoleService } from '../api/services/role.service';
+import { UserService } from '../api/services/user.service';
+import { AppConst } from '../utils/app-const';
+import { ToastMessage } from '../utils/toast-message';
+import { Role } from '../api/models/role';
+import { User } from '../api/models/user';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ProjectService } from '../api/services/project.service';
+import { InfraTowerService } from '../api/services/infra-tower.service';
+import { Project } from '../api/models/project';
+import { InfraTower } from '../api/models/infra-tower';
+
+@Component({
+  selector: 'app-role',
+  templateUrl: './users.component.html',
+  styleUrls: ['./users.component.scss'],
+  animations: [routerTransition()]
+})
+export class UserComponent implements OnInit {
+
+  public roles: Role[] = [];
+  public users: User[] = [];
+  public managers: User[] = [];
+  public serviceResponse: any;
+  public itemPerPageIndex: Number;
+  public currentPageIndex: Number = 1;
+  public totalRecords: Number = 0;
+  public updateForm: FormGroup;
+  public searchForm: FormGroup;
+  public updateFormSubmitted: Boolean;
+  public searchFormSubmitted: Boolean;
+  public projects: Project[] = [];
+  public infraTowers: InfraTower[] = [];
+
+  constructor(private formBuilder: FormBuilder,
+    private projectService: ProjectService,
+    private infraTowerService: InfraTowerService,
+    private roleService: RoleService,
+    private userService: UserService,
+    private toastMessage: ToastMessage) {
+  }
+
+  ngOnInit() {
+    this.getRoles();
+    this.getUserRoles('page=' + this.currentPageIndex);
+    this.findAllManagers();
+    this.getProjects();
+    this.updateFormInit();
+    this.searchFormInit();
+  }
+
+  updateFormInit() {
+    this.updateForm = this.formBuilder.group({
+      employee_id: ['', Validators.required],
+      role_id: ['', Validators.required],
+      project_id: ['', Validators.required],
+      infra_tower_id: [''],
+      is_active: ['', Validators.required]
+    });
+    this.updateForm.controls['is_active'].setValue(true);
+  }
+
+  searchFormInit() {
+    this.searchForm = this.formBuilder.group({
+      employee_id: ['', Validators.required]
+    });
+  }
+
+  get f() {
+    return this.updateForm.controls;
+  }
+
+  get sf() {
+    return this.searchForm.controls;
+  }
+
+  getRoles() {
+    this.roleService.findAll()
+      .subscribe(data => {
+        this.serviceResponse = data;
+        if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
+          this.roles = this.serviceResponse.data;
+          this.updateForm.controls['role_id'].setValue(this.roles[0]._id);
+        } else {
+          this.toastMessage.error(null, this.serviceResponse.statusMessage);
+        }
+      });
+  }
+
+  getUserRoles(params: String) {
+    this.roleService.findAllByUser(params)
+      .subscribe(data => {
+        this.serviceResponse = data;
+        if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
+          this.users = this.serviceResponse.data;
+          this.totalRecords = this.serviceResponse.metadata.totalRecords;
+          this.itemPerPageIndex = this.serviceResponse.metadata.limit;
+        } else {
+          this.toastMessage.error(null, this.serviceResponse.statusMessage);
+        }
+      });
+  }
+
+  findAllManagers() {
+    this.userService.findAllManagers()
+      .subscribe(data => {
+        this.serviceResponse = data;
+        if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
+          this.managers = this.serviceResponse.data;
+          this.updateForm.controls['manager_id'].setValue(this.managers[0].id);
+        }
+      });
+  }
+
+  getProjects() {
+    this.projectService.findList()
+      .subscribe(data => {
+        this.serviceResponse = data;
+        if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
+          this.projects = this.serviceResponse.data;
+          if (this.projects.length) {
+            this.updateForm.controls['project_id'].setValue(this.projects[0]._id);
+            this.getInfraTowers();
+          }
+        }
+      });
+  }
+
+  getInfraTowers() {
+    this.infraTowerService.findList(this.querParams({ project_id: this.updateForm.value.project_id }))
+      .subscribe(data => {
+        this.serviceResponse = data;
+        if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
+          this.infraTowers = this.serviceResponse.data;
+          if (this.infraTowers.length) {
+            this.updateForm.controls['infra_tower_id'].setValue(this.infraTowers[0]._id);
+          } else {
+            this.updateForm.controls['infra_tower_id'].setValue('');
+          }
+        }
+      });
+  }
+
+  onSubmit() {
+    this.updateFormSubmitted = true;
+    if (this.updateForm.invalid) {
+      return;
+    }
+    this.userService.update(this.updateForm)
+      .subscribe(data => {
+        this.serviceResponse = data;
+        if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
+          this.managers = this.serviceResponse.data;
+          this.toastMessage.success(null, this.serviceResponse.statusMessage);
+          this.ngOnInit();
+        } else {
+          this.toastMessage.error(null, this.serviceResponse.statusMessage);
+        }
+      });
+  }
+
+  onSearch() {
+    this.searchFormSubmitted = true;
+    if (this.searchForm.invalid) {
+      return;
+    }
+    this.currentPageIndex = 1;
+    this.getUserRoles(this.getSearchedData());
+  }
+
+  pageChanged(pageNo: any) {
+    this.currentPageIndex = pageNo;
+    this.getUserRoles(this.getSearchedData());
+  }
+
+  getSearchedData() {
+    const employee_id = (this.searchForm.value.employee_id !== '') ? (this.querParams(this.searchForm.value) + '&') : '';
+    return employee_id + 'page=' + this.currentPageIndex;
+  }
+
+  querParams(object: Object): String {
+    return Object.entries(object).map(([key, val]) => `${key}=${val}`).join('&');
+  }
+
+  clearSearch() {
+    this.searchFormSubmitted = false;
+    this.getUserRoles(null);
+    this.searchFormInit();
+  }
+
+  updateUser(user: User) {
+    this.updateForm.controls['employee_id'].setValue(user.employee_id);
+    this.updateForm.controls['role_id'].setValue(user.role_id);
+    this.updateForm.controls['manager_id'].setValue(user.manager_id);
+    this.updateForm.controls['is_active'].setValue(user.is_active);
+    window.scroll(0, 0);
+  }
+}

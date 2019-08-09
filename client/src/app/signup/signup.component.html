@@ -1,0 +1,116 @@
+<div class="login-page" [@routerTransition]>
+    <div class="row justify-content-md-center">
+        <div class="col-md-4">
+            <img class="user-avatar" src="assets/images/logo.png" width="150px" />
+            <h1>TimeSheet</h1>
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                <div class="form-content">
+                    <div class="form-group">
+                        <input type="number" min="1" class="form-control input-underline input-lg"
+                            formControlName="employee_id" placeholder="{{ 'Enter Your Emp Id' | translate }}"
+                            [ngClass]="{ 'is-invalid': submitted && f.employee_id.errors }">
+                        <div *ngIf="submitted && !!f.employee_id?.errors" class="invalid-feedback">
+                            <div *ngIf="!!f.employee_id?.errors.required">{{ 'Emp Id is required' | translate }}</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control input-underline input-lg" formControlName="name"
+                            placeholder="{{ 'Enter Your Emp Name' | translate }}"
+                            [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                        <div *ngIf="submitted && !!f.name?.errors" class="invalid-feedback">
+                            <div *ngIf="!!f.name?.errors.required">{{ 'Emp Name is required' | translate }}</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <select type="text" formControlName="security_question_id"
+                            class="form-control input-underline input-lg input-select"
+                            [ngClass]="{ 'is-invalid': submitted && f.security_question_id.errors }">
+                            <option value="">{{ 'Select the Security Questions' | translate }}</option>
+                            <option *ngFor="let securityQuestion of securityQuestions.data"
+                                [value]="securityQuestion.id">{{securityQuestion.name}}</option>
+                        </select>
+                        <div *ngIf="submitted && !!f.security_question_id?.errors" class="invalid-feedback">
+                            <div *ngIf="!!f.security_question_id?.errors.required">
+                                {{ 'Security questions is required' | translate }}</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control input-underline input-lg"
+                            formControlName="security_question_answer"
+                            placeholder="{{ 'Security Question Answer' | translate }}"
+                            [ngClass]="{ 'is-invalid': submitted && f.security_question_answer.errors }">
+                        <div *ngIf="submitted && !!f.security_question_answer?.errors" class="invalid-feedback">
+                            <div *ngIf="!!f.security_question_answer.errors?.required">
+                                {{ 'Security questions answer is required' | translate }}</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <select type="text" formControlName="manager_id"
+                            class="form-control input-underline input-lg input-select"
+                            [ngClass]="{ 'is-invalid': submitted && f.manager_id.errors }"  [value]=''>
+                            <option [value]="">Select Manager</option>
+                            <option *ngFor="let manager of managers" [value]="manager.id">{{ manager.name }}</option>
+                        </select>
+                        <div *ngIf="submitted && !!f.manager_id?.errors" class="invalid-feedback">
+                            <div *ngIf="!!f.manager_id.errors?.required">
+                                {{ 'Manager is required' | translate }}</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <select type="text" formControlName="project_id"
+                            class="form-control input-underline input-lg input-select"
+                            [ngClass]="{ 'is-invalid': submitted && f.project_id.errors }"
+                            (change)="getInfraTowers($event.target.value)" [value]=''>
+                            <option *ngFor="let project of projects" [value]="project._id">{{project.name}}</option>
+                        </select>
+                        <div *ngIf="submitted && !!f.project_id?.errors" class="invalid-feedback">
+                            <div *ngIf="!!f.project_id.errors?.required">
+                                {{ 'Project is required' | translate }}</div>
+                        </div>
+                    </div>
+                    <div class="form-group" *ngIf="infraTowers.length > 0">
+                        <select type="text" formControlName="infra_tower_id"
+                            class="form-control input-underline input-lg input-select" [value]=''>
+                            <option *ngFor="let infraTower of infraTowers" [value]="infraTower._id">{{infraTower.name}}
+                            </option>
+                        </select>
+                        <div *ngIf="submitted && (infraTowers.length > 0 && registerForm.get('infra_tower_id').value.length === '')" class="invalid-feedback">
+                            {{ 'Infra Tower is required' | translate }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control input-underline input-lg" formControlName="password"
+                            placeholder="{{ 'Password' | translate }}"
+                            [ngClass]="{ 'is-invalid': submitted && f.password.errors }">
+                        <div *ngIf="submitted && !!f.password?.errors" class="invalid-feedback">
+                            <div *ngIf="!!f.password?.errors.required">{{ 'Password is required' | translate }}</div>
+                        </div>
+                        <div *ngIf="submitted && (registerForm.get('password').value.length !== 0 && registerForm.get('password').value.length < 6)"
+                            class="invalid-feedback">
+                            Password must be 6 Characters
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control input-underline input-lg"
+                            formControlName="confirm_password" placeholder="{{ 'Confirm Password' | translate }}">
+                        <div *ngIf="submitted && registerForm.get('confirm_password').value.length >= 6 && (registerForm.get('password').value !== registerForm.get('confirm_password').value)"
+                            class="invalid-feedback">
+                            Password and Confirm Password should match.
+                        </div>
+                        <div *ngIf="submitted && (registerForm.get('confirm_password').value.length === 0)"
+                            class="invalid-feedback">
+                            {{ 'Confirm password is required' | translate }}
+                        </div>
+                        <div *ngIf="submitted && (registerForm.get('confirm_password').value.length !== 0 && registerForm.get('confirm_password').value.length < 6)"
+                            class="invalid-feedback">
+                            Confirm Password must be 6 Characters
+                        </div>
+                    </div>
+                </div>
+                <a class="btn rounded-btn" (click)="onSubmit()">{{ 'Register' | translate }}</a>&nbsp;
+                <a class="btn rounded-btn" [routerLink]="['/login']">{{ 'Log in' | translate }}</a>
+            </form>
+        </div>
+    </div>
+</div>

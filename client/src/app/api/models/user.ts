@@ -1,0 +1,16 @@
+import { ServiceResponse } from './service-response';
+export class User extends ServiceResponse {
+    id: String;
+    created_at: String;
+    update_at: String;
+    name: String;
+    employee_id: Number;
+    role_id: String;
+    manager_id: String;
+    security_question_id: String;
+    security_question_answer: String;
+    password: String;
+    is_active: boolean;
+    role: any;
+    manager: any;
+}

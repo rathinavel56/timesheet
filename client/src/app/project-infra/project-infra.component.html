@@ -1,0 +1,112 @@
+<div [@routerTransition]>
+  <app-page-header [heading]="'Project Infra Tower'" [icon]="'fa-edit'"></app-page-header>
+  <form [formGroup]="createForm" (ngSubmit)="onSubmit()">
+    <h2><label class="control-label col-sm-12">{{ formTypeShow }} </label></h2>
+    <div class="form-group">
+      <label class="control-label col-sm-2">Project</label>
+      <div class="col-sm-6">
+        <select class="form-control" formControlName="project_id" [ngClass]="{ 'is-invalid': formSubmitted && f.project_id.errors }">
+          <option *ngFor="let project of projects" [value]="project._id">
+            {{ project.name }}</option>
+        </select>
+        <div *ngIf="formSubmitted && !!f.project_id?.errors" class="invalid-feedback">
+          <div *ngIf="!!f.project_id?.errors.required">
+            Project is required
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2">Infra Tower</label>
+      <div class="col-sm-6">
+        <select class="form-control" formControlName="infra_tower_id" [ngClass]="{ 'is-invalid': formSubmitted && f.infra_tower_id.errors }">
+          <option *ngFor="let infraTower of infraTowers" [value]="infraTower._id">
+            {{ infraTower.name }}</option>
+        </select>
+        <div *ngIf="formSubmitted && !!f.infra_tower_id?.errors" class="invalid-feedback">
+          <div *ngIf="!!f.infra_tower_id?.errors.required">
+            Infra Tower is required
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2">Status&nbsp;&nbsp;&nbsp;<input type="checkbox"
+          formControlName="is_active"></label>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-6">
+        <button type="submit" class="btn btn-primary">Submit</button>&nbsp;&nbsp;&nbsp;<button type="button"
+          (click)="clearForm()" class="btn btn-default">
+          Clear
+        </button>
+      </div>
+    </div>
+  </form>
+  <table id="timeSheet" class="table table-striped table-bordered" style="width:100%">
+    <thead>
+      <tr>
+        <td colspan="6">
+          <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+            <div class="row">
+              <div class="col-sm-2">
+                <input type="text" class="form-control" formControlName="name" placeholder="Enter search text"
+                  [ngClass]="{ 'is-invalid': searchFormSubmitted && sf.name.errors }" />
+                <div *ngIf="searchFormSubmitted && !!sf.name?.errors" class="invalid-feedback">
+                  <div *ngIf="!!sf.name?.errors.required">
+                    Search text is required
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <button type="submit" class="btn btn-primary">Search</button>&nbsp;&nbsp;&nbsp;<button type="button"
+                  class="btn btn-default" (click)="clearSearch()">
+                  Clear Search Results
+                </button>
+              </div>
+            </div>
+          </form>
+        </td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>Project</th>
+        <th>Infra Tower</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+      <tr *ngFor="
+              let projectInfraTower of projectInfraTowers
+                  | paginate
+                      : {
+                            id: 'paginationControlsId',
+                            itemsPerPage: itemPerPageIndex,
+                            currentPage: currentPageIndex,
+                            totalItems: totalRecords
+                        }
+          ">
+
+        <td>{{ projectInfraTower.project[0].name }}</td>
+        <td>{{ projectInfraTower.infra_tower[0].name }}</td>
+        <td>{{ projectInfraTower.is_active == true ? 'Active' : 'Inactive' }}</td>
+        <td><button type="button" class="btn btn-primary" (click)="update(projectInfraTower)">Update</button></td>
+      </tr>
+      <tr *ngIf="!projectInfraTowers.length">
+        <td colspan="6">
+          No Records found.
+        </td>
+      </tr>
+    </tbody>
+    <tfoot *ngIf="projectInfraTowers.length">
+      <tr>
+        <td colspan="6">
+          <pagination-controls id="paginationControlsId" (pageChange)="pageChanged($event)" maxSize="9"
+            directionLinks="true" autoHide="true" responsive="true" previousLabel="Previous" nextLabel="Next"
+            screenReaderPaginationLabel="Pagination" screenReaderPageLabel="page">
+          </pagination-controls>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>

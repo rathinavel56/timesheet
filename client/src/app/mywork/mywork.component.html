@@ -1,0 +1,335 @@
+<div [@routerTransition]>
+        <app-page-header [heading]="'Enter Your Time Sheet Detail'" [icon]="'fa-edit'"></app-page-header>
+        <table id="timeSheetFill" class="table table-striped table-bordered">
+                <thead *ngIf="dailyTimeSheet">
+                        <tr>
+                                <th colspan="8">
+                                        <table width="100%">
+                                                <tr>
+                                                        <td>
+                                                                <form [formGroup]="timeSheetSearchForm"
+                                                                        (ngSubmit)="onSearch()">
+                                                                        <div class="form-group">
+                                                                                <strong>Select Date To Fill Time Sheet:
+                                                                                </strong>
+                                                                                <div
+                                                                                        class="input-group datepicker-input col-sm-2">
+                                                                                        <input class="form-control"
+                                                                                                placeholder="yyyy-mm-dd"
+                                                                                                name="dp" ngbDatepicker
+                                                                                                #d="ngbDatepicker"
+                                                                                                [minDate]="minDate"
+                                                                                                [maxDate]="maxDate"
+                                                                                                formControlName="timeSheetDate" />
+                                                                                        <button class="input-group-addon"
+                                                                                                (click)="d.toggle()"
+                                                                                                type="button">
+                                                                                                <span
+                                                                                                        class="fa fa-calendar"></span>
+                                                                                        </button>
+                                                                                </div>
+                                                                        </div>
+                                                                        &nbsp;&nbsp;&nbsp;&nbsp;<button
+                                                                                class="btn btn-primary" type="submit">
+                                                                                Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;<button
+                                                                                class="btn btn-success" type="button"
+                                                                                (click)="getDefaultTimeSheet()">
+                                                                                Fill Default Settings
+                                                                        </button>
+                                                                </form>
+                                                        </td>
+                                                </tr>
+                                        </table>
+                                </th>
+                        </tr>
+                </thead>
+                <tr>
+                        <td colspan="8" [formGroup]="timeSheetForm">
+                                <div class="card bg-light margin-top-23" formArrayName="timesheets" *ngFor="
+                        let timeSheetFill of timeSheetForm.get('timesheets')[
+                            'controls'
+                        ];
+                        let i = index
+                    ">
+                                        <div class="card-body" [formGroupName]="i">
+                                                <table formArrayName="days" class="table100">
+                                                        <tr>
+                                                                <th>Date</th>
+                                                                <th *ngFor="
+                                        let day of timeSheetFill.get('days')[
+                                            'controls'
+                                        ];
+                                        let j = index
+                                    " [formGroupName]="j">
+                                                                        {{ day.get("name").value }}
+                                                                </th>
+                                                        </tr>
+                                                        <tr>
+                                                                <th>BAU</th>
+                                                                <th *ngFor="
+                                        let day of timeSheetFill.get('days')[
+                                            'controls'
+                                        ];
+                                        let j = index
+                                    " [formGroupName]="j">
+                                                                        <select class="form-control"
+                                                                                formControlName="bau">
+                                                                                <option *ngFor="let bau of baus"
+                                                                                        [value]="bau.id">
+                                                                                        {{ bau.name }}</option>
+                                                                        </select>
+                                                                        <div *ngIf="
+                                            timeSheetFormSubmitted &&
+                                            i === 0 &&
+                                            day.get('bau').value === 0
+                                        " class="invalid-feedback-show">
+                                                                                Required
+                                                                        </div>
+                                                                        <div *ngIf="
+                                            timeSheetFormSubmitted &&
+                                            day.get('addtion_hours_planned')
+                                                .value +
+                                                day.get(
+                                                    'addtion_hours_unplanned'
+                                                ).value +
+                                                getBauHours(
+                                                    day.get('bau').value
+                                                ) >
+                                                24
+                                        " class="invalid-feedback-show">
+                                                                                Entered Hour is greater than 24 Hours
+                                                                        </div>
+                                                                </th>
+                                                        </tr>
+                                                        <tr>
+                                                                <th>OT Planned</th>
+                                                                <th *ngFor="
+                                        let day of timeSheetFill.get('days')[
+                                            'controls'
+                                        ];
+                                        let j = index
+                                    " [formGroupName]="j">
+                                                                        <select formControlName="ot_planned"
+                                                                                class="form-control">
+                                                                                <option *ngFor="let ot of otPlanned"
+                                                                                        [value]="ot.id">
+                                                                                        {{ ot.name }}</option>
+                                                                        </select>
+                                                                </th>
+                                                        </tr>
+                                                        <tr>
+                                                                <th>OT Planned Addtion Hours</th>
+                                                                <th *ngFor="
+                                        let day of timeSheetFill.get('days')[
+                                            'controls'
+                                        ];
+                                        let j = index
+                                    " [formGroupName]="j">
+                                                                        <input class="form-control" type="number"
+                                                                                min="1" max="24"
+                                                                                (keypress)="numberOnly($event)"
+                                                                                formControlName="addtion_hours_planned"
+                                                                                [readonly]="
+                                            day.get('ot_planned').value === 0
+                                        " />
+                                                                        <div *ngIf="
+                                            timeSheetFormSubmitted &&
+                                            day.get('ot_planned').value > 0 &&
+                                            day.get('addtion_hours_planned')
+                                                .value === ''
+                                        " class="invalid-feedback-show">
+                                                                                Required
+                                                                        </div>
+                                                                        <div *ngIf="
+                                            timeSheetFormSubmitted &&
+                                            day.get('ot_planned').value === 1 &&
+                                            day.get('addtion_hours_planned')
+                                                .value +
+                                                day.get(
+                                                    'addtion_hours_unplanned'
+                                                ).value +
+                                                getBauHours(
+                                                    day.get('bau').value
+                                                ) >
+                                                24
+                                        " class="invalid-feedback-show">
+                                                                                Entered Hour is greater than 24 Hours
+                                                                        </div>
+                                                                </th>
+                                                        </tr>
+                                                        <tr>
+                                                                <th>OT Planned Addtion Hours Description</th>
+                                                                <th *ngFor="
+                                        let day of timeSheetFill.get('days')[
+                                            'controls'
+                                        ];
+                                        let j = index
+                                    " [formGroupName]="j">
+                                                                        <input class="form-control" type="text"
+                                                                                formControlName="addtion_hours_desc_planned"
+                                                                                [readonly]="
+                                            day.get('ot_planned').value === 0
+                                        " />
+                                                                        <div *ngIf="
+                                            timeSheetFormSubmitted &&
+                                            day.get('ot_planned').value > 0 &&
+                                            day.get(
+                                                'addtion_hours_desc_planned'
+                                            ).value === ''
+                                        " class="invalid-feedback-show">
+                                                                                Required
+                                                                        </div>
+                                                                </th>
+                                                        </tr>
+                                                        <tr>
+                                                                <th>OT Unplanned</th>
+                                                                <th *ngFor="
+                                        let day of timeSheetFill.get('days')[
+                                            'controls'
+                                        ];
+                                        let j = index
+                                    " [formGroupName]="j">
+                                                                        <select formControlName="ot_unplanned"
+                                                                                class="form-control">
+                                                                                <option *ngFor="let ot of otUnplanned"
+                                                                                        [value]="ot.id">
+                                                                                        {{ ot.name }}</option>
+                                                                        </select>
+                                                                </th>
+                                                        </tr>
+                                                        <tr>
+                                                                <th>OT Unplanned Addtion Hours</th>
+                                                                <th *ngFor="
+                                        let day of timeSheetFill.get('days')[
+                                            'controls'
+                                        ];
+                                        let j = index
+                                    " [formGroupName]="j">
+                                                                        <input class="form-control" type="number"
+                                                                                min="1" max="24"
+                                                                                (keypress)="numberOnly($event)"
+                                                                                formControlName="addtion_hours_unplanned"
+                                                                                [readonly]="
+                                            day.get('ot_unplanned').value === 0
+                                        " />
+                                                                        <div *ngIf="
+                                            timeSheetFormSubmitted &&
+                                            day.get('ot_unplanned').value > 0 &&
+                                            day.get('addtion_hours_unplanned')
+                                                .value === ''
+                                        " class="invalid-feedback-show">
+                                                                                Required
+                                                                        </div>
+                                                                        <div *ngIf="
+                                            timeSheetFormSubmitted &&
+                                            day.get('ot_unplanned').value ===
+                                                1 &&
+                                            day.get('addtion_hours_planned')
+                                                .value +
+                                                day.get(
+                                                    'addtion_hours_unplanned'
+                                                ).value +
+                                                getBauHours(
+                                                    day.get('bau').value
+                                                ) >
+                                                24
+                                        " class="invalid-feedback-show">
+                                                                                Entered Hour is greater than 24 Hours
+                                                                        </div>
+                                                                </th>
+                                                        </tr>
+                                                        <tr>
+                                                                <th>OT Unplanned Addtion Hours Description</th>
+                                                                <th *ngFor="
+                                        let day of timeSheetFill.get('days')[
+                                            'controls'
+                                        ];
+                                        let j = index
+                                    " [formGroupName]="j">
+                                                                        <input class="form-control" type="text"
+                                                                                formControlName="addtion_hours_desc_unplanned"
+                                                                                [readonly]="
+                                            day.get('ot_unplanned').value === 0
+                                        " />
+                                                                        <div *ngIf="
+                                            timeSheetFormSubmitted &&
+                                            day.get('ot_unplanned').value > 0 &&
+                                            day.get(
+                                                'addtion_hours_desc_unplanned'
+                                            ).value === ''
+                                        " class="invalid-feedback-show">
+                                                                                Required
+                                                                        </div>
+                                                                </th>
+                                                        </tr>
+                                                </table>
+                                        </div>
+                                        <br />
+                                </div>
+                                <p class="text-center">
+                                        <br /><button type="button" [disabled]="!submitTimeSheet"
+                                                class="btn btn-primary" (click)="onSubmit()">
+                                                Submit
+                                        </button>
+                                </p>
+                        </td>
+                </tr>
+        </table>
+
+        <table id="timeSheet" class="table table-striped table-bordered" style="width:100%" *ngIf="dailyTimeSheet">
+                <thead>
+                        <tr>
+                                <th>Date</th>
+                                <th>Manager</th>
+                                <th>Project</th>
+                                <th>Infra Tower</th>
+                                <th>Billabe Hours</th>
+                                <th>Non Billabe Hours</th>
+                                <th>Ot Planned Hours</th>
+                                <th>Ot Planned Description</th>
+                                <th>Ot Unplanned Hours</th>
+                                <th>Ot Unplanned Description</th>
+                        </tr>
+                </thead>
+                <tbody>
+                        <tr *ngFor="
+                    let timeSheet of timeSheets
+                        | paginate
+                            : {
+                                  id: 'paginationControlsId',
+                                  itemsPerPage: itemPerPageIndex,
+                                  currentPage: currentPageIndex,
+                                  totalItems: totalRecords
+                              }
+                ">
+                                <th>{{ timeSheet.date | date: "dd/MM/yyyy" }}</th>
+                                <th>{{ timeSheet.manager[0].name }}</th>
+                                <th>{{ timeSheet.project_id }}</th>
+                                <th>{{ timeSheet.infra_tower_id }}</th>
+                                <th>{{ timeSheet.billed_hour }}</th>
+                                <th>{{ timeSheet.non_billed_hour }}</th>
+                                <th>{{ timeSheet.addtion_hours_planned }}</th>
+                                <th>{{ timeSheet.addtion_hours_desc_planned }}</th>
+                                <th>{{ timeSheet.addtion_hours_unplanned }}</th>
+                                <th>{{ timeSheet.addtion_hours_desc_planned }}</th>
+                        </tr>
+                        <tr *ngIf="!timeSheets.length">
+                                <td colspan="10">
+                                        No Records found.
+                                </td>
+                        </tr>
+                </tbody>
+                <tfoot *ngIf="totalRecords > itemPerPageIndex">
+                        <tr>
+                                <td colspan="10">
+                                        <pagination-controls id="paginationControlsId"
+                                                (pageChange)="pageChanged($event)" maxSize="9" directionLinks="true"
+                                                autoHide="true" responsive="true" previousLabel="Previous"
+                                                nextLabel="Next" screenReaderPaginationLabel="Pagination"
+                                                screenReaderPageLabel="page">
+                                        </pagination-controls>
+                                </td>
+                        </tr>
+                </tfoot>
+        </table>
+</div>

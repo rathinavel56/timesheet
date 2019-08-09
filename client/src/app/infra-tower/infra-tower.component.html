@@ -1,0 +1,102 @@
+<div [@routerTransition]>
+        <app-page-header [heading]="'Infra Tower'" [icon]="'fa-edit'"></app-page-header>
+        <form [formGroup]="createForm" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                        <label class="control-label col-sm-2" for="Infra_Tower">Infra Tower {{ formTypeShow }} </label>
+                        <div class="col-sm-6">
+                                <input type="text" class="form-control" formControlName="name"
+                                        placeholder="Enter the text"
+                                        [ngClass]="{ 'is-invalid': formSubmitted && f.name.errors }" />
+                                <div *ngIf="formSubmitted && !!f.name?.errors" class="invalid-feedback">
+                                        <div *ngIf="!!f.name?.errors.required">
+                                                Name is required
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+                <div class="form-group">
+                        <label class="control-label col-sm-2">Status&nbsp;&nbsp;&nbsp;<input type="checkbox"
+                                        formControlName="is_active"></label>
+                </div>
+                <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6">
+                                <button type="submit" class="btn btn-primary">Submit</button>&nbsp;&nbsp;&nbsp;<button
+                                        type="button" (click)="clearForm()" class="btn btn-default">
+                                        Clear
+                                </button>
+                        </div>
+                </div>
+        </form>
+        <table id="timeSheet" class="table table-striped table-bordered" style="width:100%">
+                <thead>
+                        <tr>
+                                <td colspan="6">
+                                        <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+                                                <div class="row">
+                                                        <div class="col-sm-2">
+                                                                <input type="text" class="form-control"
+                                                                        formControlName="name"
+                                                                        placeholder="Enter search text"
+                                                                        [ngClass]="{ 'is-invalid': searchFormSubmitted && sf.name.errors }" />
+                                                                <div *ngIf="searchFormSubmitted && !!sf.name?.errors"
+                                                                        class="invalid-feedback">
+                                                                        <div *ngIf="!!sf.name?.errors.required">
+                                                                                Search text is required
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                                <button type="submit"
+                                                                        class="btn btn-primary">Search</button>&nbsp;&nbsp;&nbsp;<button
+                                                                        type="button" class="btn btn-default"
+                                                                        (click)="clearSearch()">
+                                                                        Clear Search Results
+                                                                </button>
+                                                        </div>
+                                                </div>
+                                        </form>
+                                </td>
+                        </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                                <th>Infra Tower</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                        </tr>
+                        <tr *ngFor="
+                    let infraTower of infraTowers
+                        | paginate
+                            : {
+                                  id: 'paginationControlsId',
+                                  itemsPerPage: itemPerPageIndex,
+                                  currentPage: currentPageIndex,
+                                  totalItems: totalRecords
+                              }
+                ">
+
+                                <td>{{ infraTower.name }}</td>
+                                <td>{{ infraTower.is_active == true ? 'Active' : 'Inactive' }}</td>
+                                <td><button type="button" class="btn btn-primary"
+                                                (click)="update(infraTower)">Update</button></td>
+                        </tr>
+                        <tr *ngIf="!infraTowers.length">
+                                <td colspan="6">
+                                        No Records found.
+                                </td>
+                        </tr>
+                </tbody>
+                <tfoot *ngIf="infraTowers.length">
+                        <tr>
+                                <td colspan="6">
+                                        <pagination-controls id="paginationControlsId"
+                                                (pageChange)="pageChanged($event)" maxSize="9" directionLinks="true"
+                                                autoHide="true" responsive="true" previousLabel="Previous"
+                                                nextLabel="Next" screenReaderPaginationLabel="Pagination"
+                                                screenReaderPageLabel="page">
+                                        </pagination-controls>
+                                </td>
+                        </tr>
+                </tfoot>
+        </table>
+</div>

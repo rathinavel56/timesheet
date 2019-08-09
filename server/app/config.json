@@ -1,0 +1,102 @@
+{
+    "secret": "1234",
+    "refreshTokenSecret": "12345",
+    "port": 3000,
+    "tokenLife": 50000,
+    "httpCode": {
+        "success": 200,
+        "validationFailed": 412,
+        "internalServerError": 500,
+        "unAuthorized": 401,
+        "badRequest": 400
+    },
+    "statusMessage": {
+        "success": "success",
+        "failed": "failed",
+        "user":{
+            "success": "User fetched successfully",
+            "created": "User Created Successfully",
+            "updated": "User Updated Successfully",
+            "exist": "Employee Number already exist, please login or try forgot password",
+            "notExist": "Login Failed, Employee Number doesn't exist",
+            "employeeEmpty": "Login Failed, employee number is empty",
+            "passwordEmpty": "Login Failed, password is empty",
+            "requestEmpty": "User Can't be created due to empty object",
+            "loginSuccess" : "Login Success",
+            "loginFailed" : "Login Failed"
+        },
+        "infraTower":{
+            "success": "Infra Tower fetched successfully",
+            "created": "Infra Tower Created Successfully",
+            "updated": "Infra Tower Updated Successfully",
+            "exist": "Infra Tower already exist"
+        },
+        "project":{
+            "success": "Projects fetched successfully",
+            "created": "Project Created Successfully",
+            "updated": "Project Updated Successfully",
+            "exist": "Project already exist"
+        },
+        "project_infra":{
+            "success": "Project Infra fetched successfully",
+            "created": "Project Infra Created Successfully",
+            "updated": "Project Infra Updated Successfully",
+            "exist": "Project Infra already exist"
+        },
+        "security_question" : {
+            "nameEmpty": "SecurityQuestion can't be empty"
+        },
+        "role" : {
+            "success": "Roles fetched successfully"
+        },
+        "time_sheet" : {
+            "success": "Time sheet created successfully",
+            "failed": "Time sheet failed to create",
+            "requestEmpty": "Time sheet can't be created due to empty object",
+            "fetched": "Time sheet fetched successfully"
+        }
+    },
+    "mongoCode": {
+        "duplicateEntry": 11000
+    },
+    "pagination": {
+        "limit": 2
+    },
+    "bau": [
+        {
+            "id": 1,
+            "name": "8"
+        },
+        {
+            "id": 2,
+            "name": "4"
+        },
+        {
+            "id": 3,
+            "name": "8N"
+        },
+        {
+            "id": 4,
+            "name": "4N"
+        },
+        {
+            "id": 5,
+            "name": "PL"
+        },
+        {
+            "id": 6,
+            "name": "EL"
+        },
+        {
+            "id": 7,
+            "name": "SL"
+        },
+        {
+            "id": 7,
+            "name": "Wo"
+        },
+        {
+            "id": 8,
+            "name": "Holiday"
+        }]
+}

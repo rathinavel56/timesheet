@@ -1,0 +1,116 @@
+<div [@routerTransition]>
+  <app-page-header [heading]="'Users'" [icon]="'fa-edit'"></app-page-header>
+  <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="email">Employee ID</label>
+      <div class="col-sm-6">
+        <input type="number" class="form-control input-underline input-lg" formControlName="employee_id"
+          placeholder="Enter Your Emp Id" [ngClass]="{ 'is-invalid': updateFormSubmitted && f.employee_id.errors }">
+        <div *ngIf="updateFormSubmitted && !!f.employee_id?.errors" class="invalid-feedback">
+          <div *ngIf="!!f.employee_id?.errors.required">Emp Id is required</div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2">Role</label>
+      <div class="col-sm-6">
+        <select class="form-control" formControlName="role_id">
+          <option *ngFor="let role of roles" [value]="role._id">{{ role.name }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2" >Manager</label>
+      <div class="col-sm-6">
+        <select class="form-control" formControlName="manager_id">
+          <option *ngFor="let manager of managers" [value]="manager.id">{{ manager.name }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2" >Project</label>
+      <div class="col-sm-6">
+        <select class="form-control" formControlName="project_id" (change)="getInfraTowers()">
+          <option *ngFor="let project of projects" [value]="project._id">{{project.name}}</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2" >Infra Tower</label>
+      <div class="col-sm-6">
+        <select class="form-control" formControlName="infra_tower_id">
+          <option *ngFor="let infraTower of infraTowers" [value]="infraTower._id">{{infraTower.name}}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" >
+      <label class="control-label col-sm-2">Status&nbsp;&nbsp;&nbsp;<input type="checkbox" formControlName="is_active"></label>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </form>
+  <table id="timeSheet" class="table table-striped table-bordered" style="width:100%">
+    <thead>
+      <tr>
+        <td colspan="6">
+          <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+            <div class="row">
+              <div class="col-sm-2">
+                <input type="number" class="form-control" formControlName="employee_id"
+                  placeholder="Enter Emp Id to search"
+                  [ngClass]="{ 'is-invalid': searchFormSubmitted && sf.employee_id.errors }">
+                <div *ngIf="searchFormSubmitted && !!sf.employee_id?.errors" class="invalid-feedback">
+                  <div *ngIf="!!sf.employee_id?.errors.required">Emp Id is required</div>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <button type="submit" class="btn btn-primary">Search</button>&nbsp;&nbsp;&nbsp;<button type="button"
+                  class="btn btn-default" (click)="clearSearch()">Clear Search Results</button>
+              </div>
+            </div>
+          </form>
+        </td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>Employee ID</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Manager</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+      <tr *ngFor="let user of users  | paginate: { id: 'paginationControlsId',
+      itemsPerPage: itemPerPageIndex,
+      currentPage: currentPageIndex,
+      totalItems: totalRecords }">
+        <td>{{user.employee_id}}</td>
+        <td>{{user.name}}</td>
+        <td>{{user.role[0].name}}</td>
+        <td>{{user.manager[0].name}}</td>
+        <td>{{ user.is_active == true ? 'Active' : 'Inactive' }}</td>
+        <td><button type="button" class="btn btn-primary" (click)='updateUser(user)'>Update</button></td>
+      </tr>
+      <tr *ngIf="!users.length">
+        <td colspan="6">
+          No Records found.
+        </td>
+      </tr>
+    </tbody>
+    <tfoot *ngIf="users.length">
+      <tr>
+        <td colspan="6">
+          <pagination-controls id="paginationControlsId" (pageChange)="pageChanged($event)" maxSize="9"
+            directionLinks="true" autoHide="true" responsive="true" previousLabel="Previous" nextLabel="Next"
+            screenReaderPaginationLabel="Pagination" screenReaderPageLabel="page">
+          </pagination-controls>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
