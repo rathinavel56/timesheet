@@ -2,10 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const RoleSchema = new Schema({
-  _id: {
-    type: mongoose.Types.ObjectId,
-    require: true,
-  },
   created_at: {
     type: Date,
     require: true,
@@ -23,8 +19,13 @@ const RoleSchema = new Schema({
   is_active: {
     type: Boolean,
     require: true,
-    default: 1
+    default: true
   }
 });
+RoleSchema.set('toJSON', { virtuals: true })
+  .pre('save', function (next) {
+    this.updated_at = Date.now();
+    next();
+  });
 const Role = mongoose.model('Role', RoleSchema, 'roles');
 module.exports = Role;

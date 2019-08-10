@@ -13,7 +13,7 @@
     "statusMessage": {
         "success": "success",
         "failed": "failed",
-        "user":{
+        "user": {
             "success": "User fetched successfully",
             "created": "User Created Successfully",
             "updated": "User Updated Successfully",
@@ -22,34 +22,34 @@
             "employeeEmpty": "Login Failed, employee number is empty",
             "passwordEmpty": "Login Failed, password is empty",
             "requestEmpty": "User Can't be created due to empty object",
-            "loginSuccess" : "Login Success",
-            "loginFailed" : "Login Failed"
+            "loginSuccess": "Login Success",
+            "loginFailed": "Login Failed"
         },
-        "infraTower":{
+        "infraTower": {
             "success": "Infra Tower fetched successfully",
             "created": "Infra Tower Created Successfully",
             "updated": "Infra Tower Updated Successfully",
             "exist": "Infra Tower already exist"
         },
-        "project":{
+        "project": {
             "success": "Projects fetched successfully",
             "created": "Project Created Successfully",
             "updated": "Project Updated Successfully",
             "exist": "Project already exist"
         },
-        "project_infra":{
+        "project_infra": {
             "success": "Project Infra fetched successfully",
             "created": "Project Infra Created Successfully",
             "updated": "Project Infra Updated Successfully",
             "exist": "Project Infra already exist"
         },
-        "security_question" : {
+        "security_question": {
             "nameEmpty": "SecurityQuestion can't be empty"
         },
-        "role" : {
+        "role": {
             "success": "Roles fetched successfully"
         },
-        "time_sheet" : {
+        "time_sheet": {
             "success": "Time sheet created successfully",
             "failed": "Time sheet failed to create",
             "requestEmpty": "Time sheet can't be created due to empty object",
@@ -61,6 +61,54 @@
     },
     "pagination": {
         "limit": 2
+    },
+    "roles": [
+        {
+            "name": "Admin",
+            "is_active": true
+        },
+        {
+            "name": "Manager",
+            "is_active": true
+        },
+        {
+            "name": "Users",
+            "is_active": true
+        }
+    ],
+    "security_questions": [
+        {
+            "name": "What primary school did you attend?",
+            "is_active": true
+        },
+        {
+            "name": "In what town or city was your first full time job?",
+            "is_active": true
+        },
+        {
+            "name": "What was the house number and street name you lived in as a child?",
+            "is_active": true
+        },
+        {
+            "name": "What were the last four digits of your childhood telephone number?",
+            "is_active": true
+        }
+    ],
+    "users": {
+        "admin_employee_id": 0,
+        "admin_employee_id_object": 0,
+        "user": [
+            {
+                "employee_id": 0,
+                "name": "Admin",
+                "password": "Testing1$",
+                "role_id": "",
+                "manager_id": "",
+                "security_question_id": "",
+                "security_question_answer": "Testing1$",
+                "is_active": true
+            }
+        ]
     },
     "bau": [
         {
@@ -98,5 +146,6 @@
         {
             "id": 8,
             "name": "Holiday"
-        }]
+        }
+    ]
 }

@@ -68,22 +68,6 @@ export class SignupComponent implements OnInit {
             .subscribe(data => {
                 this.serviceResponse = data;
                 if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
-                    /*this.managers.push({
-                        id: '',
-                        employee_id: 0,
-                        role_id: '',
-                        manager_id: '',
-                        security_question_id: '',
-                        security_question_answer: '',
-                        password: '',
-                        is_active: true,
-                        role: '',
-                        manager: '',
-                        name: 'Select Manager',
-                        is_active: true,
-                        created_at: '',
-                        update_at: ''
-                    });*/
                     this.managers = this.serviceResponse.data;
                     this.registerForm.controls['manager_id'].setValue('');
                 }
@@ -95,14 +79,6 @@ export class SignupComponent implements OnInit {
             .subscribe(data => {
                 this.serviceResponse = data;
                 if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
-                    /*this.projects.push({
-                        id: '',
-                        _id: '',
-                        name: 'Select Project',
-                        is_active: true,
-                        created_at: '',
-                        update_at: ''
-                    });*/
                     this.projects = this.serviceResponse.data;
                     this.registerForm.controls['project_id'].setValue('');
                     if (this.projects.length) {

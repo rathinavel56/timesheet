@@ -14,3 +14,6 @@ sudo service mongod stop
 
 docker rmi $(docker volume -a -q)
 docker run -it -d --name mongodb --network docker_demo -p 27117:27117 -v mongodata:/data/db mvertes/alpine-mongo --port 27117
+
+npm install -g -f angular-cli
+netstat -a -n | find "27017"

@@ -39,8 +39,6 @@ router
 
     //Role
     .get('/api/v1/role', Role.find)
-    .post('/api/v1/role', Role.create)
-    .put('/api/v1/role', Role.update)
 
     //User
     .get('/api/v1/users', User.findAll)

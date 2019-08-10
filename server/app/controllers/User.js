@@ -6,7 +6,9 @@ const config = require('../config');
 
 exports.login = function (req, res) {
     if (req.body) {
+        console.log('userInfo---1', req.body);
         if (req.body.employee_id) {
+            console.log('userInfo---2');
             User
                 .findOne({ employee_id: req.body.employee_id })
                 .populate('role', '_id name')

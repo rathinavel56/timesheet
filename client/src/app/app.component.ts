@@ -13,7 +13,8 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.session = this.getSessionDetail();
+        console.log(this.router.url);
+        /*this.session = this.getSessionDetail();
         if (this.session != null && this.session !== '') {
             if (this.session.user.role === 'Admin') {
                 this.router.navigate(['/settings']);
@@ -22,7 +23,7 @@ export class AppComponent implements OnInit {
             }
         } else {
             this.router.navigate(['/login']);
-        }
+        }*/
     }
 
     getSessionDetail() {

@@ -59,7 +59,6 @@ const UserSchema = new Schema({
   },
   infra_tower_id: {
     type: mongoose.Types.ObjectId,
-    require: true,
     ref: 'InfraTower'
   },
   is_active: {
