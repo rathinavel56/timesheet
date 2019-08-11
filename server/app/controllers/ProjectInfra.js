@@ -63,7 +63,8 @@ exports.update = function (req, res) {
                     var projectInfraUpdate = { $set: { project_id: req.body.project_id, infra_tower_id: req.body.infra_tower_id, is_active: req.body.is_active } };
                     ProjectInfra
                         .findOneAndUpdate(condition, projectInfraUpdate, {
-                            new: true
+                            new: true,
+                            useFindAndModify: false
                         })
                         .exec(function (err, resultSet) {
                             if (err) {

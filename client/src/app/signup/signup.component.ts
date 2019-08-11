@@ -123,16 +123,17 @@ export class SignupComponent implements OnInit {
         }
         delete this.registerForm.value.confirm_password;
         this.userService.register(this.registerForm)
-            .subscribe(data => {
-                this.serviceResponse = data;
+            .subscribe(response => {
+                this.serviceResponse = response;
                 if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
                     this.user = this.serviceResponse.data;
                     this.toastMessage.success(null, this.serviceResponse.statusMessage);
-                    const value = {
-                        'token': this.serviceResponse.token
-                    };
-                    sessionStorage.setItem('timeSheet', JSON.stringify(value));
-                    this.router.navigate(['/users']);
+                    sessionStorage.setItem('timeSheet', JSON.stringify(this.user));
+                    if (this.serviceResponse.data.user.role === 'Admin') {
+                        this.router.navigate(['/settings']);
+                    } else {
+                        this.router.navigate(['/mywork']);
+                    }
                 } else {
                     this.toastMessage.error(null, this.serviceResponse.statusMessage);
                 }

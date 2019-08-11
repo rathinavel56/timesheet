@@ -1,75 +1,119 @@
 const expressJwt = require('express-jwt');
 const config = require('../config');
-const jsonwebtoken = require('jsonwebtoken');
-function jwt() {
-  const { secret } = config;
-  return expressJwt({
-    secret: secret,
-    credentialsRequired: false,
-    getToken: function (req, res) {
+const jwt = require('jsonwebtoken');
+var apiVersion = "/api/v1";
+const jwtCheck = (req, res, next) => {
+  var expectionUrl = [
+    {
+      url: apiVersion + '/login',
+      method: ['POST']
+    },
+    {
+      url: apiVersion + '/register',
+      method: ['POST']
+    },
+    {
+      url: apiVersion + '/forgot_password',
+      method: ['POST']
+    },
+    {
+      url: apiVersion + '/security_question',
+      method: ['GET']
+    },
+    {
+      url: apiVersion + '/managers',
+      method: ['GET']
+    },
+    {
+      url: apiVersion + '/infra_tower',
+      method: ['GET']
+    },
+    {
+      url: apiVersion + '/infra_tower/list',
+      method: ['GET']
+    },
+    {
+      url: apiVersion + '/project',
+      method: ['GET']
+    },
+    {
+      url: apiVersion + '/project/list',
+      method: ['GET']
+    }
+  ];
+
+  var adminUrl = [
+    {
+      url: apiVersion + '/dashboard',
+      method: ['GET']
+    },
+    {
+      url: apiVersion + '/role',
+      method: ['GET']
+    },
+    {
+      url: apiVersion + '/users',
+      method: ['GET']
+    },
+    {
+      url: apiVersion + '/infra_tower',
+      method: ['POST', 'PUT']
+    },
+    {
+      url: apiVersion + '/project',
+      method: ['POST', 'PUT']
+    },
+    {
+      url: apiVersion + '/projectInfra',
+      method: ['POST', 'PUT']
+    },
+    {
+      url: apiVersion + '/export_time_sheet',
+      method: ['POST']
+    }
+  ];
+  var currentUrl = req.url.split('?');
+  var accessMethod = req.method;
+  currentUrl = currentUrl[0];
+  var isExpectionUrl = expectionUrl.filter(function(element){
+    return (element.url === currentUrl && element.method.indexOf(accessMethod));
+  });
+  if (isExpectionUrl.length > 0) {
+    next();
+  } else {
       const authorizationHeaader = req.headers.authorization;
       if (authorizationHeaader) {
         const token = req.headers.authorization.split(' ')[1]; // Bearer <token>
         try {
           // verify makes sure that the token hasn't expired and has been issued by us
-          jsonwebtoken.verify(token, config.secret, function(err, decoded) {
+          jwt.verify(token, config.secret, function(err, decoded) {
             if (err) {
               res.status(config.httpCode.unAuthorized).send({error: err});
-              next();
             } else {
               // Let's pass back the decoded token to the request object
               req.decoded = decoded;
+              console.log(req.decoded);
+              if (req.decoded.role_id !== config.roles[0]._id) {
+                var isAdminUrl = adminUrl.filter(function(element) {
+                  return (element.url === currentUrl && element.method.indexOf(accessMethod) > -1);
+                });
+                if (isAdminUrl.length > 0) {
+                  res.status(config.httpCode.unAuthorized).send({ message: 'Invalid Token' });        
+                } else {
+                  next();
+                }      
+              } else {
+                next();
+              }
             }
           });          
-        } catch (err) {
+         } catch (err) {
           // Throw an error just in case anything goes wrong with verification
-          result = {
-            error: err,
-            status: config.httpCode.unAuthorized
-          };
-          if (res) {
-            // res.sendStatus(config.httpCode.unAuthorized);
-            res.status(config.httpCode.unAuthorized).send({error: result});
-          }
+          res.status(config.httpCode.unAuthorized).send({ message: err });
         }
       } else {
-        result = {
-          error: `Authentication error. Token required.`,
-          status: config.httpCode.unAuthorized
-        };
-        if (res) {
-          res.sendStatus(config.httpCode.unAuthorized);
-        }
+        res.status(config.httpCode.unAuthorized).send({ message: 'Invalid Token' });
       }
-    }
-  }).unless({
-    path: [
-      // public routes that don't require authentication
-      {
-        url: '/login',
-        methods: ['POST']
-      },
-      {
-        url: '/register',
-        methods: ['POST']
-      },
-      {
-        url: '/forgot_password',
-        methods: ['POST']
-      },
-      {
-        url: '/login',
-        methods: ['POST']
-      },
-      {
-        url: '/security_question',
-        methods: ['GET', 'POST']
-      },
-      {
-        url: '/managers',
-        methods: ['GET']
-      },
-    ]
-  });
-}
-module.exports = jwt;
+  }
+};
+module.exports = jwtCheck;

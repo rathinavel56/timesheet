@@ -29,13 +29,11 @@ const UserSchema = new Schema({
   },
   role_id: {
     type: mongoose.Types.ObjectId,
-    require: true,
-    default: '5d285b460b5454d796f0f0db'
+    require: true
   },
   manager_id: {
     type: mongoose.Types.ObjectId,
-    require: true,
-    default: '5d270bc80b5454d796f0f0da'
+    require: true
   },
   shore_type: {
     type: Number,

@@ -9,13 +9,13 @@ const routes: Routes = [
         component: LayoutComponent,
         children: [
             {
-                path: 'settings',
+                path: 'users',
                 loadChildren: () => import('../users/users.module').then(m => m.UserModule),
                 canActivate: [AuthGuard]
             },
             {
-                path: 'billability',
-                loadChildren: () => import('../billability/billability.module').then(m => m.BillabilityModule),
+                path: 'settings',
+                loadChildren: () => import('../users/users.module').then(m => m.UserModule),
                 canActivate: [AuthGuard]
             },
             {

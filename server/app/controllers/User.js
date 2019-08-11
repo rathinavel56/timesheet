@@ -1,14 +1,15 @@
-﻿const User = require('../models/User');
+﻿const mongoose = require('mongoose');
+const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const mongoError = 'MongoError';
 const config = require('../config');
+const jsonwebtoken = require('jsonwebtoken');
+const saltRounds = 10;
 
 exports.login = function (req, res) {
     if (req.body) {
-        console.log('userInfo---1', req.body);
-        if (req.body.employee_id) {
-            console.log('userInfo---2');
+        if (req.body.employee_id !== undefined) {
             User
                 .findOne({ employee_id: req.body.employee_id })
                 .populate('role', '_id name')
@@ -21,8 +22,11 @@ exports.login = function (req, res) {
                         if (userInfo && req.body.password) {
                             const requestPassword = req.body.password;
                             if (bcrypt.compareSync(requestPassword, userInfo.password)) {
-
-                                const token = jwt.sign({ id: userInfo._id }, config.secret, { expiresIn: config.tokenLife });
+                                const tokenInfo = {
+                                    id: userInfo._id,
+                                    role_id: userInfo.role[0]._id
+                                };
+                                const token = jwt.sign(tokenInfo, config.secret, { expiresIn: config.tokenLife });
                                 const userData = {
                                     id: userInfo.id,
                                     role: userInfo.role[0].name,
@@ -48,7 +52,7 @@ exports.login = function (req, res) {
                         } else {
                             res.json({
                                 status: config.statusMessage.failed,
-                                statusMessage: (userInfo) ? config.statusMessage.user.notExist : config.statusMessage.user.passwordEmpty,
+                                statusMessage: (userInfo === null) ? config.statusMessage.user.notExist : config.statusMessage.user.passwordEmpty,
                                 data: null
                             });
                         }
@@ -72,33 +76,42 @@ exports.login = function (req, res) {
 
 exports.register = function (req, res) {
     if (req.body !== undefined && req.body !== '') {
+        if (req.body.infra_tower_id === "") {
+            delete req.body.infra_tower_id;
+        }
+        delete req.body.role_id;
+        req.body.role_id = mongoose.Types.ObjectId(config.roles[2]._id);
         const user = new User(req.body);
-        user
-            .save()
-            .then(resultSet => {
-                userProj.user_id = resultSet._id;
-                const token = jwt.sign({ id: resultSet._id }, config.secret, { expiresIn: config.tokenLife });
-                res.status(config.httpCode.success).json({
-                    status: config.statusMessage.success,
-                    statusMessage: config.statusMessage.user.created,
-                    data: resultSet,
-                    token: token
-                });
-            })
-            .catch(error => {
+        user.save(function(error, resultSet) {
+            if (error) {
                 if (error.name === mongoError && error.code === config.mongoCode.duplicateEntry) {
                     res.status(config.httpCode.validationFailed).json({
-                        errors: {
-                            statusMessage: config.statusMessage.user.exist,
-                            code: error.code
-                        }
+                        statusMessage: config.statusMessage.user.exist,
+                        code: error.code
                     });
                 } else {
                     res.status(config.httpCode.validationFailed).json({
                         error: error
                     });
                 }
-            });
+            } else {
+                const token = jwt.sign({ id: resultSet._id, role_id: resultSet.role_id }, config.secret, { expiresIn: config.tokenLife });
+                const userData = {
+                    id: resultSet._id,
+                    role: 'User',
+                    name: resultSet.name,
+                    employee_id: resultSet.employee_id
+                };
+                res.json({
+                    status: config.statusMessage.success,
+                    statusMessage: config.statusMessage.user.loginSuccess,
+                    data: {
+                        user: userData,
+                        access_token: token
+                    }
+                });
+            }
+        });
     } else {
         res.status(config.httpCode.badRequest).json({
             statusMessage: config.statusMessage.user.requestEmpty
@@ -107,12 +120,38 @@ exports.register = function (req, res) {
 };
 
 exports.forgotPassword = function (req, res) {
-    if (req.body !== undefined) {
-        res.send('test');
+    if (req.body.token !== "") {
+        change_password_update(req, res, req.body.token, config.statusMessage.forgot_password.successFinal, config.statusMessage.forgot_password.failedFinal);
     } else {
-        res.status(400).json({
-            statusMessage: config.statusMessage.user.requestEmpty
-        });
+        var conditions = {
+            employee_id: { $eq: req.body.employee_id },
+            security_question_id: { $eq: mongoose.Types.ObjectId(req.body.security_question_id) },
+            security_question_answer: { $eq: req.body.security_question_answer }
+        };
+        User
+            .findOne(conditions).exec(function (err, user) {
+                if (err) {
+                    res.status(config.httpCode.internalServerError).json({
+                        error: err
+                    });
+                } else {
+                    if (user === null) {
+                        res.status(config.httpCode.success).json({
+                            statusMessage: config.statusMessage.forgot_password.failed
+                        });
+                    } else {
+                        
+                        const token = jwt.sign({ id: user._id }, config.secret, { expiresIn: config.tokenLife });
+                                
+                        res.status(config.httpCode.success).json({
+                            status: config.statusMessage.success,
+                            statusMessage: config.statusMessage.forgot_password.success,
+                            token: token
+                        });
+                        
+                    }
+                }
+            });
     }
 };
 
@@ -183,12 +222,13 @@ exports.findAllManagers = function (req, res) {
     if (req.body) {
         User
             .find({
-                role_id: { $ne: '5d285b460b5454d796f0f0dd' },
+                role_id: { $ne: mongoose.Types.ObjectId(config.roles[2]._id) },
                 is_active: { $eq: true }
             })
             .select('name _id')
             .exec(function (err, users) {
                 if (err) {
+
                     res.status(config.httpCode.internalServerError).json({
                         error: err
                     });
@@ -206,25 +246,84 @@ exports.findAllManagers = function (req, res) {
         });
     }
 };
-exports.update = function (req, res) {
+exports.findById = function (req, res) {
     if (req.body) {
-        var condition = {
-            employee_id: { $eq: req.body.employee_id }
-        };
-        var userUpdate = { $set: { role_id: req.body.role_id, manager_id: req.body.manager_id, is_active: req.body.is_active } };
         User
-            .findOneAndUpdate(condition, userUpdate, {
-                new: true
+            .findOne({
+                _id: { $eq: req.decoded.id },
+                is_active: { $eq: true }
             })
-            .exec(function (err) {
+            .select('name role_id manager_id project_id infra_tower_id is_active')
+            .exec(function (err, user) {
                 if (err) {
                     res.status(config.httpCode.internalServerError).json({
                         error: err
                     });
                 } else {
+                    res.status(config.httpCode.success).json({
+                        status: config.statusMessage.success,
+                        statusMessage: config.statusMessage.user.success,
+                        data: user
+                    });
+                }
+            });
+    } else {
+        res.status(config.httpCode.badRequest).json({
+            statusMessage: config.statusMessage.user.requestEmpty
+        });
+    }
+};
+exports.update = function (req, res) {
+    if (req.body) {
+        var condition = {
+            _id: { $eq: req.decoded.id }
+        };
+        var userUpdate;
+        if (req.decoded.role === req.body.role_id) {
+            userUpdate = {
+                $set: {
+                        role_id: mongoose.Types.ObjectId(req.body.role_id),
+                        name: req.body.name,
+                        project_id: mongoose.Types.ObjectId(req.body.project_id),
+                        infra_tower_id: mongoose.Types.ObjectId(req.body.infra_tower_id),
+                        manager_id: mongoose.Types.ObjectId(req.body.manager_id),
+                        is_active: req.body.is_active
+                    }
+                };
+        } else {
+            userUpdate = {
+                $set: {
+                        name: req.body.name,
+                        project_id: mongoose.Types.ObjectId(req.body.project_id),
+                        infra_tower_id: mongoose.Types.ObjectId(req.body.infra_tower_id),
+                        manager_id: mongoose.Types.ObjectId(req.body.manager_id)
+                    }
+                };
+        }
+        User
+            .findOneAndUpdate(condition, userUpdate, {
+                new: true,
+                useFindAndModify: false
+            })
+            .exec(function (err, user) {
+                if (err) {
+                    res.status(config.httpCode.internalServerError).json({
+                        error: err
+                    });
+                } else {
+                    var role = config.roles.filter(function(element) {
+                        return (user.role_id.toString() === element._id.toString());
+                    });
+                    const userData = {
+                        id: user._id,
+                        role: role[0].name,
+                        name: user.name,
+                        employee_id: user.employee_id
+                    };
                     res.json({
                         status: config.statusMessage.success,
-                        statusMessage: config.statusMessage.user.updated
+                        statusMessage: config.statusMessage.user.updated,
+                        data: userData
                     });
                 }
             });
@@ -237,29 +336,57 @@ exports.update = function (req, res) {
 
 exports.change_password = function (req, res) {
     if (req.body) {
-        var condition = {
-            _id: { $eq: '5d270c0317c72927f0f4b30b' }
-        };
-        var userUpdate = { $set: { password: req.body.password } };
-        User
-            .findOneAndUpdate(condition, userUpdate, {
-                new: true
-            })
-            .exec(function (err) {
-                if (err) {
-                    res.status(config.httpCode.internalServerError).json({
-                        error: err
-                    });
-                } else {
-                    res.json({
-                        status: config.statusMessage.success,
-                        statusMessage: config.statusMessage.user.updated
-                    });
-                }
-            });
+        change_password_update(req, res, req.decoded.id, config.statusMessage.change_password.success, config.statusMessage.change_password.failed);
     } else {
         res.status(config.httpCode.badRequest).json({
             statusMessage: config.statusMessage.user.requestEmpty
         });
     }
+}
+
+function change_password_getId(req, res, token, successMessage, failMessage) {
+    try {
+        // verify makes sure that the token hasn't expired and has been issued by us
+        jsonwebtoken.verify(req.body.token, config.secret, function(err, decoded) {
+          if (err) {
+            res.status(config.httpCode.success).json({
+                status: config.statusMessage.success,
+                statusMessage: failMessage
+            });
+          } else {
+            change_password_getId(req, res, decoded.id, successMessage, failMessage);
+          }
+        });          
+      } catch (err) {
+        res.status(config.httpCode.success).json({
+            status: config.statusMessage.failed,
+            statusMessage: failMessage,
+            err: err
+        });
+      }
+}
+
+function change_password_update(req, res, decodeId, successMessage, failMessage) {
+    var condition = {
+        _id: { $eq: decodeId }
+    };
+    var updatePassword = bcrypt.hashSync(req.body.password, saltRounds);
+    var userUpdate = { $set: { password: updatePassword} };
+    User
+        .findOneAndUpdate(condition, userUpdate, {
+            new: true,
+            useFindAndModify: false
+        })
+        .exec(function (err) {
+            if (err) {
+                res.status(config.httpCode.internalServerError).json({
+                    error: err
+                });
+            } else {
+                res.status(config.httpCode.success).json({
+                    status: config.statusMessage.success,
+                    statusMessage: successMessage
+                });
+            }
+        });
 }

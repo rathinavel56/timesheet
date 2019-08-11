@@ -5,7 +5,7 @@
     "tokenLife": 50000,
     "httpCode": {
         "success": 200,
-        "validationFailed": 412,
+        "validationFailed": 200,
         "internalServerError": 500,
         "unAuthorized": 401,
         "badRequest": 400
@@ -23,7 +23,7 @@
             "passwordEmpty": "Login Failed, password is empty",
             "requestEmpty": "User Can't be created due to empty object",
             "loginSuccess": "Login Success",
-            "loginFailed": "Login Failed"
+            "loginFailed": "Employee Number or password is incorrect"
         },
         "infraTower": {
             "success": "Infra Tower fetched successfully",
@@ -49,6 +49,16 @@
         "role": {
             "success": "Roles fetched successfully"
         },
+        "change_password": {
+            "success": "Password update successfully",
+            "failed": "Password update failed"
+        },
+        "forgot_password": {
+            "success": "Please enter your new password",
+            "successFinal": "Password update successfully, please try login",
+            "failed": "Employee Number or Security Question answer didn't match",
+            "failedFinal": "Please try forgot password or contact administrator"
+        },
         "time_sheet": {
             "success": "Time sheet created successfully",
             "failed": "Time sheet failed to create",
@@ -64,15 +74,18 @@
     },
     "roles": [
         {
+            "_id": "5d4f980f0639122468bda92e",
             "name": "Admin",
             "is_active": true
         },
         {
+            "_id": "5d4eb6f872c75226e0bb9b9d",
             "name": "Manager",
             "is_active": true
         },
         {
-            "name": "Users",
+            "_id": "5d4eb71072c75226e0bb9b9e",
+            "name": "User",
             "is_active": true
         }
     ],
@@ -96,15 +109,12 @@
     ],
     "users": {
         "admin_employee_id": 0,
-        "admin_employee_id_object": 0,
+        "admin_employee_id_object": "000000005dd5c713f8ae61e2",
         "user": [
             {
                 "employee_id": 0,
                 "name": "Admin",
                 "password": "Testing1$",
-                "role_id": "",
-                "manager_id": "",
-                "security_question_id": "",
                 "security_question_answer": "Testing1$",
                 "is_active": true
             }

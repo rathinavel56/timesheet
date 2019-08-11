@@ -88,7 +88,7 @@ exports.create = function (req, res) {
 };
 exports.findAll = function (req, res) {
     const userId = req.decoded.id;
-    if (req.body !== undefined && req.query && userId !== undefined && userId !== null) {
+    if (req.body !== undefined && req.query) {
         if (req.query.start !== '') {
             var startDate = new Date(req.query.start + 'T00:00:00.000+00:00').toISOString();
             var endDate = new Date(req.query.end + 'T00:00:00.000+00:00').toISOString();

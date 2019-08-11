@@ -1,5 +1,9 @@
 <nav class="sidebar" [ngClass]="{ sidebarPushRight: isActive, collapsed: collapsed }">
     <div class="list-group">
+        <a *ngIf="isAdmin" routerLink="/users" [routerLinkActive]="['router-link-active']" class="list-group-item">
+            <i class="fa fa-fw fa-bar-chart-o"></i>&nbsp;
+            <span>{{ 'Users' | translate }}</span>
+        </a>
         <a *ngIf="isAdmin" routerLink="/projects" [routerLinkActive]="['router-link-active']" class="list-group-item">
             <i class="fa fa-fw fa-bar-chart-o"></i>&nbsp;
             <span>{{ 'Projects' | translate }}</span>

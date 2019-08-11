@@ -42,24 +42,26 @@ export class LoginComponent implements OnInit {
 
     onSubmit() {
         this.submitted = true;
-        if (this.loginForm.invalid) {
-            return;
-        }
-        this.userService.login(this.loginForm)
-            .subscribe(data => {
-                this.serviceResponse = data;
-                if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
-                    this.user = this.serviceResponse.data;
-                    this.toastMessage.success(null, this.serviceResponse.statusMessage);
-                    sessionStorage.setItem('timeSheet', JSON.stringify(this.user));
-                    if (this.serviceResponse.data.user.role === 'Admin') {
-                        this.router.navigate(['/settings']);
+        setTimeout(() => {
+            if (this.loginForm.invalid && document.getElementsByClassName('invalid-feedback-show').length > 0) {
+                return;
+            }
+            this.userService.login(this.loginForm)
+                .subscribe(data => {
+                    this.serviceResponse = data;
+                    if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
+                        this.user = this.serviceResponse.data;
+                        this.toastMessage.success(null, this.serviceResponse.statusMessage);
+                        sessionStorage.setItem('timeSheet', JSON.stringify(this.user));
+                        if (this.serviceResponse.data.user.role === 'Admin') {
+                            this.router.navigate(['/settings']);
+                        } else {
+                            this.router.navigate(['/mywork']);
+                        }
                     } else {
-                        this.router.navigate(['/mywork']);
+                        this.toastMessage.error(null, this.serviceResponse.statusMessage);
                     }
-                } else {
-                    this.toastMessage.error(null, this.serviceResponse.statusMessage);
-                }
-            });
+                });
+        }, 100);
     }
 }

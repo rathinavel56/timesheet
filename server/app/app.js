@@ -3,13 +3,11 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const jwt = require('./utils/Jwt');
-const errorHandler = require('./utils/ErrorHandler');
+//import router from versioning folder
+const apiV1 = require('./route');
 
 app.use(express.static('public'))
-    .use(jwt())
-    .use(errorHandler)
-    .use(require('./route'))
+    .use(apiV1)
     .use(bodyParser.urlencoded({ extended: false }))
     .use(bodyParser.json())
     .use(cors())

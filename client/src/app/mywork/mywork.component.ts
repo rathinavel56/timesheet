@@ -135,9 +135,7 @@ export class MyworkComponent implements OnInit {
           this.serviceResponse = data;
           if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
             this.toastMessage.success(null, this.serviceResponse.statusMessage);
-            this.initForm();
-            if (this.dailyTimeSheet) {
-              this.getStartEnd(this.currentDate);
+            if (!this.dailyTimeSheet) {
               this.getTimeSheet('', '');
             }
           } else {

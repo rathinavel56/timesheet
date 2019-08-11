@@ -37,7 +37,8 @@ exports.update = function (req, res) {
     var infraTowerUpdate = { $set: { name: req.body.name, is_active: req.body.is_active } };
     InfraTower
         .findOneAndUpdate(condition, infraTowerUpdate, {
-            new: true
+            new: true,
+            useFindAndModify: false
         })
         .exec(function (err, resultSet) {
             if (err) {

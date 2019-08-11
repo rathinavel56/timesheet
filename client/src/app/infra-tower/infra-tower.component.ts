@@ -101,6 +101,7 @@ export class InfraTowerComponent implements OnInit {
       this.createForm.controls['name'].setValue('');
       this.createForm.controls['is_active'].setValue(true);
       this.getInfraTowers('page=' + this.currentPageIndex);
+      this.formSubmitted = false;
       this.toastMessage.success(null, this.serviceResponse.statusMessage);
     } else {
       this.toastMessage.error(null, this.serviceResponse.statusMessage);

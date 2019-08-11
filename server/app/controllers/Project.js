@@ -35,7 +35,8 @@ exports.update = function (req, res) {
     var projectUpdate = { $set: { name: req.body.name, is_active: req.body.is_active } };
     Project
         .findOneAndUpdate(condition, projectUpdate, {
-            new: true
+            new: true,
+            useFindAndModify: false
         })
         .exec(function (err, resultSet) {
             if (err) {

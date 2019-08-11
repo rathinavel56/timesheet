@@ -5,6 +5,7 @@ export class AppConst {
         LOGIN: '/login',
         ROLE: '/role',
         USER: '/users',
+        USERBYID: '/user',
         MANAGERS: '/managers',
         INFRATOWER: '/infra_tower',
         PROJECT: '/project',
@@ -13,7 +14,9 @@ export class AppConst {
         PROJECTLIST: '/project/list',
         INFRATOWERLIST: '/infra_tower/list',
         DEFAULTTIMESHEET: '/default_time_sheet',
-        DAILYTIMESHEET: '/daily_time_sheet'
+        DAILYTIMESHEET: '/daily_time_sheet',
+        FORGETPASSWORD: '/forgot_password',
+        CHANGEPASSWORD: '/change_password'
     };
 
     public static readonly SERVICE_STATUS = {

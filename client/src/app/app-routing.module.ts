@@ -17,6 +17,14 @@ const routes: Routes = [
         loadChildren: () => import('./signup/signup.module').then(m => m.SignupModule)
     },
     {
+        path: 'change_password',
+        loadChildren: () => import('./change-password/change-password.module').then(m => m.ChangePasswordModule)
+    },
+    {
+        path: 'forgot_password',
+        loadChildren: () => import('./forgot-password/forgot-password.module').then(m => m.ForgotPasswordModule)
+    },
+    {
         path: 'error',
         loadChildren: () => import('./server-error/server-error.module').then(m => m.ServerErrorModule)
     },

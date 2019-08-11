@@ -13,14 +13,18 @@ mongoose.connect(dbUri, {
         throw err;
     } else {
         console.log("successfully connected to the database !");
+        /* // Clean Up
+        User.deleteMany({}, function () {});
+        Role.deleteMany({}, function () {});
+        SecurityQuestion.deleteMany({}, function () {});*/
         var role_id;
-        var securityQuestion_id; 
+        var securityQuestion_id;
         User
             .find().countDocuments(function (err, count) {
                 if(count === 0) {
-                    User.deleteMany({}, function () {});
-                    Role.deleteMany({}, function () {});
-                    SecurityQuestion.deleteMany({}, function () {});
+                    config.roles[0]._id = mongoose.Types.ObjectId(config.roles[0]._id);
+                    config.roles[1]._id = mongoose.Types.ObjectId(config.roles[1]._id);
+                    config.roles[2]._id = mongoose.Types.ObjectId(config.roles[2]._id);
                     Role.create(config.roles, function (err) {
                         if (err) {
                             console.log('Roles Collections Error', err);
@@ -43,11 +47,11 @@ mongoose.connect(dbUri, {
                                                         } else {
                                                             security_question_id = securityQuestion[0]._id;
                                                             var insertAdmin = config.users.user;
-                                                                
-                                                            insertAdmin[0].manager_id = mongoose.Types.ObjectId(config.users.admin_employee_id_object);
-                                                            insertAdmin[0]._id = mongoose.Types.ObjectId(config.users.admin_employee_id_object); 
-                                                            insertAdmin[0].role_id = mongoose.Types.ObjectId(role_id);
-                                                            insertAdmin[0].security_question_id = mongoose.Types.ObjectId(securityQuestion_id);
+                                                            var defaultId = mongoose.Types.ObjectId(config.users.admin_employee_id_object);
+                                                            insertAdmin[0].manager_id = defaultId;
+                                                            insertAdmin[0]._id = defaultId; 
+                                                            insertAdmin[0].role_id = role_id;
+                                                            insertAdmin[0].security_question_id = security_question_id;
                                                             User.create(insertAdmin, function (err) {
                                                                 if (err) {
                                                                     console.log('Admin Create error', err);

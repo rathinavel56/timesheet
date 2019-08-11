@@ -11,6 +11,7 @@ import { ProjectService } from '../api/services/project.service';
 import { InfraTowerService } from '../api/services/infra-tower.service';
 import { Project } from '../api/models/project';
 import { InfraTower } from '../api/models/infra-tower';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-role',
@@ -18,10 +19,11 @@ import { InfraTower } from '../api/models/infra-tower';
   styleUrls: ['./users.component.scss'],
   animations: [routerTransition()]
 })
-export class UserComponent implements OnInit {
+export class UserComponent extends AppComponent implements OnInit {
 
   public roles: Role[] = [];
   public users: User[] = [];
+  public user: User;
   public managers: User[] = [];
   public serviceResponse: any;
   public itemPerPageIndex: Number;
@@ -29,7 +31,8 @@ export class UserComponent implements OnInit {
   public totalRecords: Number = 0;
   public updateForm: FormGroup;
   public searchForm: FormGroup;
-  public updateFormSubmitted: Boolean;
+  public isAdmin: Boolean = false;
+  public submitted: Boolean = false;
   public searchFormSubmitted: Boolean;
   public projects: Project[] = [];
   public infraTowers: InfraTower[] = [];
@@ -40,21 +43,28 @@ export class UserComponent implements OnInit {
     private roleService: RoleService,
     private userService: UserService,
     private toastMessage: ToastMessage) {
+      super(null);
+      this.isAdmin = this.isAdminValidate();
   }
 
   ngOnInit() {
-    this.getRoles();
-    this.getUserRoles('page=' + this.currentPageIndex);
+    if (this.isAdmin) {
+      this.getRoles();
+      this.getUserRoles('page=' + this.currentPageIndex);
+      this.searchFormInit();
+    } else {
+      this.getUserById();
+    }
     this.findAllManagers();
     this.getProjects();
     this.updateFormInit();
-    this.searchFormInit();
   }
 
   updateFormInit() {
     this.updateForm = this.formBuilder.group({
-      employee_id: ['', Validators.required],
+      name: ['', Validators.required],
       role_id: ['', Validators.required],
+      manager_id: ['', Validators.required],
       project_id: ['', Validators.required],
       infra_tower_id: [''],
       is_active: ['', Validators.required]
@@ -109,7 +119,11 @@ export class UserComponent implements OnInit {
         this.serviceResponse = data;
         if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
           this.managers = this.serviceResponse.data;
-          this.updateForm.controls['manager_id'].setValue(this.managers[0].id);
+          if (!this.isAdmin) {
+            this.updateForm.controls['manager_id'].setValue(this.user.manager_id);
+          } else {  
+            this.updateForm.controls['manager_id'].setValue(this.managers[0].id);
+          }
         }
       });
   }
@@ -121,7 +135,11 @@ export class UserComponent implements OnInit {
         if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
           this.projects = this.serviceResponse.data;
           if (this.projects.length) {
-            this.updateForm.controls['project_id'].setValue(this.projects[0]._id);
+            if (!this.isAdmin) {
+              this.updateForm.controls['project_id'].setValue(this.user.project_id);
+            } else {
+              this.updateForm.controls['project_id'].setValue(this.projects[0]._id);
+            }
             this.getInfraTowers();
           }
         }
@@ -135,7 +153,11 @@ export class UserComponent implements OnInit {
         if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
           this.infraTowers = this.serviceResponse.data;
           if (this.infraTowers.length) {
-            this.updateForm.controls['infra_tower_id'].setValue(this.infraTowers[0]._id);
+            if (!this.isAdmin) {
+              this.updateForm.controls['infra_tower_id'].setValue(this.user.infra_tower_id);
+            } else {
+              this.updateForm.controls['infra_tower_id'].setValue(this.infraTowers[0]._id);
+            }
           } else {
             this.updateForm.controls['infra_tower_id'].setValue('');
           }
@@ -143,8 +165,17 @@ export class UserComponent implements OnInit {
       });
   }
 
+  getUserById() {
+    this.userService.findById()
+      .subscribe(data => {
+        this.serviceResponse = data;
+        this.user = this.serviceResponse.data;
+        this.updateForm.controls['name'].setValue(this.user.name);
+      });
+  }
+
   onSubmit() {
-    this.updateFormSubmitted = true;
+    this.submitted = true;
     if (this.updateForm.invalid) {
       return;
     }
@@ -152,9 +183,10 @@ export class UserComponent implements OnInit {
       .subscribe(data => {
         this.serviceResponse = data;
         if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
-          this.managers = this.serviceResponse.data;
           this.toastMessage.success(null, this.serviceResponse.statusMessage);
-          this.ngOnInit();
+          if (this.isAdmin) {
+            this.ngOnInit();
+          }
         } else {
           this.toastMessage.error(null, this.serviceResponse.statusMessage);
         }
