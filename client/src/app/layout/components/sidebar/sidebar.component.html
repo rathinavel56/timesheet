@@ -28,7 +28,7 @@
             <i class="fa fa-fw fa-bar-chart-o"></i>&nbsp;
             <span>{{ 'Export Time Sheet' | translate }}</span>
         </a>
-        <a routerLink="/settings" [routerLinkActive]="['router-link-active']" class="list-group-item">
+        <a *ngIf="!isAdmin" routerLink="/settings" [routerLinkActive]="['router-link-active']" class="list-group-item">
             <i class="fa fa-fw fa-bar-chart-o"></i>&nbsp;
             <span>{{ 'Settings' | translate }}</span>
         </a>

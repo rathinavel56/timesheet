@@ -119,6 +119,7 @@ export class MyworkComponent implements OnInit {
     this.timeSheetFormSubmitted = true;
     setTimeout(() => {
       if (document.getElementsByClassName('invalid-feedback-show').length > 0) {
+        window.scroll(0, 0);
         return;
       }
       const timeSheetFormFormatted = [];

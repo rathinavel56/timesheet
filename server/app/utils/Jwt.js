@@ -92,7 +92,6 @@ const jwtCheck = (req, res, next) => {
             } else {
               // Let's pass back the decoded token to the request object
               req.decoded = decoded;
-              console.log(req.decoded);
               if (req.decoded.role_id !== config.roles[0]._id) {
                 var isAdminUrl = adminUrl.filter(function(element) {
                   return (element.url === currentUrl && element.method.indexOf(accessMethod) > -1);

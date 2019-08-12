@@ -63,6 +63,7 @@ export class UserComponent extends AppComponent implements OnInit {
   updateFormInit() {
     this.updateForm = this.formBuilder.group({
       name: ['', Validators.required],
+      employee_id: ['', Validators.required],
       role_id: ['', Validators.required],
       manager_id: ['', Validators.required],
       project_id: ['', Validators.required],
@@ -93,8 +94,6 @@ export class UserComponent extends AppComponent implements OnInit {
         if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
           this.roles = this.serviceResponse.data;
           this.updateForm.controls['role_id'].setValue(this.roles[0]._id);
-        } else {
-          this.toastMessage.error(null, this.serviceResponse.statusMessage);
         }
       });
   }
@@ -107,8 +106,6 @@ export class UserComponent extends AppComponent implements OnInit {
           this.users = this.serviceResponse.data;
           this.totalRecords = this.serviceResponse.metadata.totalRecords;
           this.itemPerPageIndex = this.serviceResponse.metadata.limit;
-        } else {
-          this.toastMessage.error(null, this.serviceResponse.statusMessage);
         }
       });
   }
@@ -181,6 +178,7 @@ export class UserComponent extends AppComponent implements OnInit {
     }
     this.userService.update(this.updateForm)
       .subscribe(data => {
+        this.submitted = false;
         this.serviceResponse = data;
         if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
           this.toastMessage.success(null, this.serviceResponse.statusMessage);
@@ -223,6 +221,7 @@ export class UserComponent extends AppComponent implements OnInit {
   }
 
   updateUser(user: User) {
+    this.updateForm.controls['name'].setValue(user.name);
     this.updateForm.controls['employee_id'].setValue(user.employee_id);
     this.updateForm.controls['role_id'].setValue(user.role_id);
     this.updateForm.controls['manager_id'].setValue(user.manager_id);

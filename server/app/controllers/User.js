@@ -11,7 +11,9 @@ exports.login = function (req, res) {
     if (req.body) {
         if (req.body.employee_id !== undefined) {
             User
-                .findOne({ employee_id: req.body.employee_id })
+                .findOne({
+                    employee_id: req.body.employee_id
+                })
                 .populate('role', '_id name')
                 .exec(function (err, userInfo) {
                     if (err) {
@@ -19,42 +21,53 @@ exports.login = function (req, res) {
                             error: err
                         });
                     } else {
-                        if (userInfo && req.body.password) {
-                            const requestPassword = req.body.password;
-                            if (bcrypt.compareSync(requestPassword, userInfo.password)) {
-                                const tokenInfo = {
-                                    id: userInfo._id,
-                                    role_id: userInfo.role[0]._id
-                                };
-                                const token = jwt.sign(tokenInfo, config.secret, { expiresIn: config.tokenLife });
-                                const userData = {
-                                    id: userInfo.id,
-                                    role: userInfo.role[0].name,
-                                    name: userInfo.name,
-                                    employee_id: userInfo.employee_id
-                                };
+                        if (!userInfo.is_active)
+                        {
+                            res.json({
+                                status: config.statusMessage.failed,
+                                statusMessage: config.statusMessage.user.isActiveLoginFailed,
+                                data: null
+                            });
+                        }
+                        else
+                        {
+                            if (userInfo && req.body.password) {
+                                const requestPassword = req.body.password;
+                                if (bcrypt.compareSync(requestPassword, userInfo.password)) {
+                                    const tokenInfo = {
+                                        id: userInfo._id,
+                                        role_id: userInfo.role[0]._id.toString()
+                                    };
+                                    const token = jwt.sign(tokenInfo, config.secret, { expiresIn: config.tokenLife });
+                                    const userData = {
+                                        id: userInfo.id,
+                                        role: userInfo.role[0].name,
+                                        name: userInfo.name,
+                                        employee_id: userInfo.employee_id
+                                    };
 
-                                res.json({
-                                    status: config.statusMessage.success,
-                                    statusMessage: config.statusMessage.user.loginSuccess,
-                                    data: {
-                                        user: userData,
-                                        access_token: token
-                                    }
-                                });
+                                    res.json({
+                                        status: config.statusMessage.success,
+                                        statusMessage: config.statusMessage.user.loginSuccess,
+                                        data: {
+                                            user: userData,
+                                            access_token: token
+                                        }
+                                    });
+                                } else {
+                                    res.json({
+                                        status: config.statusMessage.failed,
+                                        statusMessage: config.statusMessage.user.loginFailed,
+                                        data: null
+                                    });
+                                }
                             } else {
                                 res.json({
                                     status: config.statusMessage.failed,
-                                    statusMessage: config.statusMessage.user.loginFailed,
+                                    statusMessage: (userInfo === null) ? config.statusMessage.user.notExist : config.statusMessage.user.passwordEmpty,
                                     data: null
                                 });
                             }
-                        } else {
-                            res.json({
-                                status: config.statusMessage.failed,
-                                statusMessage: (userInfo === null) ? config.statusMessage.user.notExist : config.statusMessage.user.passwordEmpty,
-                                data: null
-                            });
                         }
                     }
                 });
@@ -250,8 +263,7 @@ exports.findById = function (req, res) {
     if (req.body) {
         User
             .findOne({
-                _id: { $eq: req.decoded.id },
-                is_active: { $eq: true }
+                _id: { $eq: req.decoded.id }
             })
             .select('name role_id manager_id project_id infra_tower_id is_active')
             .exec(function (err, user) {
@@ -275,11 +287,12 @@ exports.findById = function (req, res) {
 };
 exports.update = function (req, res) {
     if (req.body) {
-        var condition = {
-            _id: { $eq: req.decoded.id }
-        };
         var userUpdate;
-        if (req.decoded.role === req.body.role_id) {
+        var condition;
+        if (config.roles[0]._id === req.decoded.role_id) {
+            condition = {
+                employee_id: { $eq: req.body.employee_id }
+            };
             userUpdate = {
                 $set: {
                         role_id: mongoose.Types.ObjectId(req.body.role_id),
@@ -291,6 +304,9 @@ exports.update = function (req, res) {
                     }
                 };
         } else {
+            condition = {
+                _id: { $eq: req.decoded.id }
+            };
             userUpdate = {
                 $set: {
                         name: req.body.name,
@@ -354,7 +370,7 @@ function change_password_getId(req, res, token, successMessage, failMessage) {
                 statusMessage: failMessage
             });
           } else {
-            change_password_getId(req, res, decoded.id, successMessage, failMessage);
+            change_password_update(req, res, decoded.id, successMessage, failMessage);
           }
         });          
       } catch (err) {

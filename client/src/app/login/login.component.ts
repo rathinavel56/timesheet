@@ -30,6 +30,11 @@ export class LoginComponent implements OnInit {
     ) {}
 
     ngOnInit() {
+        const isSessionExpired = sessionStorage.getItem('session_expired');
+        if (isSessionExpired !== undefined && isSessionExpired === 'true') {
+            sessionStorage.removeItem('session_expired');
+            this.toastMessage.error(null, 'Session Expired');
+        }
         this.loginForm = this.formBuilder.group({
             employee_id: ['', Validators.required],
             password: ['', [Validators.required, Validators.minLength(6)]]
@@ -49,6 +54,7 @@ export class LoginComponent implements OnInit {
             this.userService.login(this.loginForm)
                 .subscribe(data => {
                     this.serviceResponse = data;
+                    this.submitted = false;
                     if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
                         this.user = this.serviceResponse.data;
                         this.toastMessage.success(null, this.serviceResponse.statusMessage);

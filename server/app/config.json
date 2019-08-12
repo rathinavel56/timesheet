@@ -23,7 +23,8 @@
             "passwordEmpty": "Login Failed, password is empty",
             "requestEmpty": "User Can't be created due to empty object",
             "loginSuccess": "Login Success",
-            "loginFailed": "Employee Number or password is incorrect"
+            "loginFailed": "Employee Number or password is incorrect",
+            "isActiveLoginFailed": "Contact your adminstrator to activate your account"
         },
         "infraTower": {
             "success": "Infra Tower fetched successfully",

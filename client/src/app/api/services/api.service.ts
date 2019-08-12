@@ -11,8 +11,7 @@ export class ApiService {
     private baseUrl: String = environment.apiEndPoint;
     private httpOptions: any;
 
-    constructor(public router: Router,
-        private http: HttpClient) {
+    constructor(private http: HttpClient) {
         const getTokenString: any = this.getToken();
         let addHeaders: HttpHeaders = new HttpHeaders();
              addHeaders = addHeaders.append('Access-Control-Allow-Origin', '*');
@@ -81,13 +80,10 @@ export class ApiService {
      * Handles all the network errors from the Http methods
      */
     handleNetworkErrors(errObject: HttpErrorResponse): Observable<any> {
-        if (errObject.status === 0 || errObject.status === 401) {
-            // sessionStorage.removeItem('timeSheet');
-            // this.router.navigate(['/dashboard']);
-            /*throwError({
-            status: errObject.status,
-            body: errObject.error
-        }) */
+        if (errObject.status === 401) {
+            sessionStorage.removeItem('timeSheet');
+            sessionStorage.setItem('session_expired', 'true');
+            window.location.href = "/login";
         }
         return of(true);
     }

@@ -6,7 +6,7 @@
             <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
                 <div class="form-content">
                     <div class="form-group">
-                        <input type="number" formControlName="employee_id" class="form-control input-underline input-lg" placeholder="{{ 'Employee Id' | translate }}" [ngClass]="{ 'is-invalid': submitted && (loginForm.get('employee_id').value.length === 0) }">
+                        <input type="number" min="0" formControlName="employee_id" class="form-control input-underline input-lg" placeholder="{{ 'Employee Id' | translate }}" [ngClass]="{ 'is-invalid': submitted && (loginForm.get('employee_id').value.length === 0) }">
                         <div *ngIf="submitted && (loginForm.get('employee_id').value.length === 0)" class="invalid-feedback-show">
                             {{ 'Employee Id is required' | translate }}</div>
                     </div>

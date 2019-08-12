@@ -9,6 +9,8 @@ export class User extends ServiceResponse {
     manager_id: String;
     security_question_id: String;
     security_question_answer: String;
+    project_id: String;
+    infra_tower_id: String;
     password: String;
     is_active: boolean;
     role: any;

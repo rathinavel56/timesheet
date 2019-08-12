@@ -125,6 +125,7 @@ export class SignupComponent implements OnInit {
         this.userService.register(this.registerForm)
             .subscribe(response => {
                 this.serviceResponse = response;
+                this.submitted = false;
                 if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
                     this.user = this.serviceResponse.data;
                     this.toastMessage.success(null, this.serviceResponse.statusMessage);
