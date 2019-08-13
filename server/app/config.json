@@ -13,6 +13,7 @@
     "statusMessage": {
         "success": "success",
         "failed": "failed",
+        "internalServerError": "Please retry or contact adminstrator with Id : ",
         "user": {
             "success": "User fetched successfully",
             "created": "User Created Successfully",
@@ -158,5 +159,48 @@
             "id": 8,
             "name": "Holiday"
         }
-    ]
+    ],
+    "log_config": {
+        "appenders": [{
+          "category": "access",
+          "type": "file",
+          "filename": "/logs/access.log",
+          "pattern": "-yyyy-MM-dd",
+          "maxLogSize": 20480,
+          "backups": 3
+        },
+        {
+          "category": "system",
+          "type": "file",
+          "filename": "/logs/system.log",
+          "pattern": "-yyyy-MM-dd",
+          "maxLogSize": 20480,
+          "backups": 3
+        },
+        {
+          "category": "error",
+          "type": "file",
+          "filename": "/logs/error.log",
+          "pattern": "-yyyy-MM-dd",
+          "maxLogSize": 20480,
+          "backups": 3
+        },
+        {
+          "category": "debug",
+          "type": "file",
+          "filename": "/logs/debug.log",
+          "pattern": "-yyyy-MM-dd",
+          "maxLogSize": 20480,
+          "backups": 3
+        },
+        {
+          "type": "console"
+        }],
+        "levels": {
+          "access": "ALL",
+          "system": "ALL",
+          "debug": "DEBUG",
+          "error": "ERROR"
+        }
+    }
 }

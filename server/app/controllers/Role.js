@@ -1,7 +1,9 @@
 ﻿const Role = require('../models/Role');
 const config = require('../config');
+const mongoose = require('mongoose');
 exports.find = function (req, res) {
-    Role
+    try {
+        Role
         .find({
             name: { $ne: "Admin" },
             is_active: { $eq: true }
@@ -19,4 +21,14 @@ exports.find = function (req, res) {
                 });
             }
         });
+    }
+    catch(err) {
+        const catchError = {
+            id: new mongoose.Types.ObjectId().toHexString(),
+            err: err
+        };
+        res.status(config.httpCode.internalServerError).json({
+            statusMessage: config.statusMessage.internalServerError + catchError.id,
+        });
+    }    
 };

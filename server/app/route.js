@@ -5,7 +5,6 @@ const cors = require('cors');
 const jwt = require('./utils/Jwt');
 const User = require('./controllers/User');
 const SecurityQuestion = require('./controllers/SecurityQuestion');
-const MyTimeSheet = require('./controllers/MyTimeSheet');
 const Dashboard = require('./controllers/Dashboard');
 const Role = require('./controllers/Role');
 const InfraTower = require('./controllers/InfraTower');
@@ -25,9 +24,6 @@ router
     .post('/api/v1/register', User.register)
     .post('/api/v1/forgot_password', User.forgotPassword)
     .get('/api/v1/security_question', SecurityQuestion.find)    
-
-    //MyTimeSheet
-    .post('/api/v1/my_time_sheet', MyTimeSheet.create)
 
     //------Common Url End---//
 

@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 })
 export class AppComponent implements OnInit {
     public session: any;
+    public windowTop: any = window.top;
 
     constructor(public router: Router) {
     }
@@ -34,4 +35,5 @@ export class AppComponent implements OnInit {
         this.session = JSON.parse(sessionStorage.getItem('timeSheet'));
         return (this.session.user.role === 'Admin') ? true : false;
     }
+
 }

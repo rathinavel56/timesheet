@@ -10,20 +10,20 @@ export class ApiService {
 
     private baseUrl: String = environment.apiEndPoint;
     private httpOptions: any;
+    public windowTop: any = window.top;
 
     constructor(private http: HttpClient) {
+
         const getTokenString: any = this.getToken();
         let addHeaders: HttpHeaders = new HttpHeaders();
              addHeaders = addHeaders.append('Access-Control-Allow-Origin', '*');
              addHeaders = addHeaders.append('Accept', 'application/json');
         if (getTokenString !== null) {
             addHeaders = addHeaders.append('Authorization', getTokenString);
-        } else {
-            addHeaders = addHeaders.append('Authorization', 'asddas');
         }
         this.httpOptions = {
             headers: addHeaders
-        };
+        }; 
     }
 
     getToken() {
@@ -84,6 +84,9 @@ export class ApiService {
             sessionStorage.removeItem('timeSheet');
             sessionStorage.setItem('session_expired', 'true');
             window.location.href = "/login";
+        }
+        else if (errObject.status === 500) {
+         alert(errObject.error.statusMessage);
         }
         return of(true);
     }

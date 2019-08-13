@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit {
                         this.toastMessage.success(null, this.serviceResponse.statusMessage);
                         sessionStorage.setItem('timeSheet', JSON.stringify(this.user));
                         if (this.serviceResponse.data.user.role === 'Admin') {
-                            this.router.navigate(['/settings']);
+                            this.router.navigate(['/users']);
                         } else {
                             this.router.navigate(['/mywork']);
                         }

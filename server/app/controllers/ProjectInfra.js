@@ -4,11 +4,12 @@ const InfraTower = require('../models/InfraTower');
 const ProjectInfra = require('../models/ProjectInfra');
 const config = require('../config');
 exports.create = function (req, res) {
-    var conditions = {
-        project_id: { $eq: req.body.project_id },
-        infra_tower_id: { $eq: req.body.infra_tower_id }
-    };
-    ProjectInfra
+    try {
+        var conditions = {
+            project_id: { $eq: req.body.project_id },
+            infra_tower_id: { $eq: req.body.infra_tower_id }
+        };
+        ProjectInfra
         .find(conditions).countDocuments(function (err, count) {
             if (err) {
                 res.status(config.httpCode.internalServerError).json({
@@ -41,16 +42,28 @@ exports.create = function (req, res) {
                 }
             }
         });
+    }
+    catch(err) {
+        const catchError = {
+            id: new mongoose.Types.ObjectId().toHexString(),
+            err: err
+        };
+        res.status(config.httpCode.internalServerError).json({
+            statusMessage: config.statusMessage.internalServerError + catchError.id,
+        });
+    }    
 };
 
 exports.update = function (req, res) {
-    var conditions = {
-        project_id: { $eq: req.body.project_id },
-        infra_tower_id: { $eq: req.body.infra_tower_id },
-        _id: { $ne: req.body.id }
-    };
-    ProjectInfra
-        .find(conditions).countDocuments(function (err, count) {
+    try {
+        var conditions = {
+            project_id: { $eq: req.body.project_id },
+            infra_tower_id: { $eq: req.body.infra_tower_id },
+            _id: { $ne: req.body.id }
+        };
+        ProjectInfra
+        .find(conditions)
+        .countDocuments(function (err, count) {
             if (err) {
                 res.status(config.httpCode.internalServerError).json({
                     error: err
@@ -89,48 +102,70 @@ exports.update = function (req, res) {
                 }
             }
         });
+    }
+    catch(err) {
+        const catchError = {
+            id: new mongoose.Types.ObjectId().toHexString(),
+            err: err
+        };
+        res.status(config.httpCode.internalServerError).json({
+            statusMessage: config.statusMessage.internalServerError + catchError.id,
+        });
+    }    
 };
 
 exports.findAll = function (req, res) {
-    if (req.body) {
-        if (req.query.name) {
-            Project.find({ name: new RegExp(req.query.name, "i") })
-                .select('_id')
-                .exec(function (err, projects) {
-                    if (err) {
-                        res.status(config.httpCode.internalServerError).json({
-                            error: err
-                        });
-                    } else {
-                        InfraTower.find({ name: new RegExp(req.query.name, "i") })
-                            .select('_id')
-                            .exec(function (err, infraTowers) {
-                                if (err) {
-                                    res.status(config.httpCode.internalServerError).json({
-                                        error: err
-                                    });
-                                } else {
-                                    getProjectInfra(req, res, projects, infraTowers);
-                                }
+    try {
+        if (req.body) {
+            if (req.query.name) {
+                Project.find({ name: new RegExp(req.query.name, "i") })
+                    .select('_id')
+                    .exec(function (err, projects) {
+                        if (err) {
+                            res.status(config.httpCode.internalServerError).json({
+                                error: err
                             });
-                    }
-                });
-        } else {
-            getProjectInfra(req, res, null, null);
-        }
+                        } else {
+                            InfraTower.find({ name: new RegExp(req.query.name, "i") })
+                                .select('_id')
+                                .exec(function (err, infraTowers) {
+                                    if (err) {
+                                        res.status(config.httpCode.internalServerError).json({
+                                            error: err
+                                        });
+                                    } else {
+                                        getProjectInfra(req, res, projects, infraTowers);
+                                    }
+                                });
+                        }
+                    });
+            } else {
+                getProjectInfra(req, res, null, null);
+            }
 
-    } else {
-        res.status(config.httpCode.badRequest).json({
-            statusMessage: config.statusMessage.user.requestEmpty
-        });
+        } else {
+            res.status(config.httpCode.badRequest).json({
+                statusMessage: config.statusMessage.user.requestEmpty
+            });
+        }
     }
+    catch(err) {
+        const catchError = {
+            id: new mongoose.Types.ObjectId().toHexString(),
+            err: err
+        };
+        res.status(config.httpCode.internalServerError).json({
+            statusMessage: config.statusMessage.internalServerError + catchError.id,
+        });
+    }    
 };
 
 exports.findList = function (req, res) {
-    var conditions = {
-        is_active: { $eq: true }
-    };
-    ProjectInfra.find(conditions)
+    try {
+        var conditions = {
+            is_active: { $eq: true }
+        };
+        ProjectInfra.find(conditions)
         .sort({
             name: 'asc'
         })
@@ -147,7 +182,16 @@ exports.findList = function (req, res) {
                 });
             }
         });
-
+    }
+    catch(err) {
+        const catchError = {
+            id: new mongoose.Types.ObjectId().toHexString(),
+            err: err
+        };
+        res.status(config.httpCode.internalServerError).json({
+            statusMessage: config.statusMessage.internalServerError + catchError.id,
+        });
+    }    
 };
 
 function getProjectInfra(req, res, projects, infraTowers) {

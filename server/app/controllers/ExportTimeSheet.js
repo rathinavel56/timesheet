@@ -2,15 +2,17 @@
 const User = require('../models/User');
 const config = require('../config');
 const XLSX = require('xlsx');
+const mongoose = require('mongoose');
 exports.create = function (req, res) {
-    var startDate = new Date(req.body.start + 'T00:00:00.000+00:00');
-    var endDate = new Date(req.body.end + 'T00:00:00.000+00:00');
-    DailyTimeSheet.find({
-        "date": {
-            "$gte": startDate.toISOString(),
-            "$lt": endDate.toISOString()
-        }
-    })
+    try {
+        var startDate = new Date(req.body.start + 'T00:00:00.000+00:00');
+        var endDate = new Date(req.body.end + 'T00:00:00.000+00:00');
+        DailyTimeSheet.find({
+            "date": {
+                "$gte": startDate.toISOString(),
+                "$lt": endDate.toISOString()
+            }
+        })
         .populate('user', '_id name')
         .populate('manager', '_id name')
         .populate('infra', '_id name')
@@ -198,6 +200,16 @@ exports.create = function (req, res) {
                 });
             }
         });
+    }
+    catch(err) {
+        const catchError = {
+            id: new mongoose.Types.ObjectId().toHexString(),
+            err: err
+        };
+        res.status(config.httpCode.internalServerError).json({
+            statusMessage: config.statusMessage.internalServerError + catchError.id,
+        });
+    }
 };
 
 function convertToNumberingScheme(number) {

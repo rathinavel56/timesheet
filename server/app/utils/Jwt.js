@@ -1,4 +1,3 @@
-const expressJwt = require('express-jwt');
 const config = require('../config');
 const jwt = require('jsonwebtoken');
 var apiVersion = "/api/v1";
