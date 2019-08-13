@@ -16,7 +16,8 @@ export class AppConst {
         DEFAULTTIMESHEET: '/default_time_sheet',
         DAILYTIMESHEET: '/daily_time_sheet',
         FORGETPASSWORD: '/forgot_password',
-        CHANGEPASSWORD: '/change_password'
+        CHANGEPASSWORD: '/change_password',
+        EXPORTTIMESHEET: '/export_time_sheet'
     };
 
     public static readonly SERVICE_STATUS = {
