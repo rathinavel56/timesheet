@@ -72,7 +72,7 @@
         "duplicateEntry": 11000
     },
     "pagination": {
-        "limit": 2
+        "limit": 10
     },
     "roles": [
         {

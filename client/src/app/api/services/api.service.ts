@@ -12,30 +12,25 @@ export class ApiService {
     private httpOptions: any;
     public windowTop: any = window.top;
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient) {}
 
-        const getTokenString: any = this.getToken();
+    getHeaders() {
         let addHeaders: HttpHeaders = new HttpHeaders();
              addHeaders = addHeaders.append('Access-Control-Allow-Origin', '*');
              addHeaders = addHeaders.append('Accept', 'application/json');
-        if (getTokenString !== null) {
-            addHeaders = addHeaders.append('Authorization', getTokenString);
+        if (sessionStorage.getItem('timeSheet') !== undefined) {
+            const sessionStr = JSON.parse(sessionStorage.getItem('timeSheet'));
+            if (sessionStr && sessionStr.access_token !== null) {
+                addHeaders = addHeaders.append('Authorization', 'Bearer ' + sessionStr.access_token); 
+            }
         }
         this.httpOptions = {
             headers: addHeaders
         }; 
     }
 
-    getToken() {
-        if (sessionStorage.getItem('timeSheet') !== undefined) {
-            const sessionStr = JSON.parse(sessionStorage.getItem('timeSheet'));
-            return (sessionStr && sessionStr.access_token !== null) ? 'Bearer ' + sessionStr.access_token : null;
-        } else {
-            return null;
-        }
-    }
-
     httpGet<T>(url): Observable<T> {
+        this.getHeaders();
         return this.http
             .get<T>(this.baseUrl + url, this.httpOptions)
             .pipe(
@@ -47,6 +42,7 @@ export class ApiService {
      * Performs a request with `post` http method.
      */
     httpPost(url, body: any): Observable<any> {
+        this.getHeaders();
         return this.http
             .post(this.baseUrl + url, body, this.httpOptions)
             .pipe(
@@ -58,6 +54,7 @@ export class ApiService {
      * Performs a request with `put` http method.
      */
     httpPut(url, body: any): Observable<any> {
+        this.getHeaders();
         return this.http
             .put(this.baseUrl + url, body, this.httpOptions)
             .pipe(
@@ -69,6 +66,7 @@ export class ApiService {
      * Performs a request with `delete` http method.
      */
     httpDelete(url, options?: any): Observable<any> {
+        this.getHeaders();
         return this.http
             .delete(this.baseUrl + url, options)
             .pipe(

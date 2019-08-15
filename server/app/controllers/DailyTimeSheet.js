@@ -21,43 +21,41 @@ exports.create = function (req, res) {
                             }
                         }, function () {
                             var isSave = false;
-                            req.body.forEach(function (element) {
-                                element.days.forEach(function (childElement) {
-                                    if (childElement.bau !== 0) {
-                                        var billed_hour = 0;
-                                        var non_billed_hour = 0;
-                                        if (childElement.bau === 1 || childElement.bau == 2)
-                                        {
-                                            billed_hour = (childElement.bau === 1) ? 8 : 4;
-                                        }
-                                        if (childElement.bau === 3 || childElement.bau == 4)
-                                        {
-                                            non_billed_hour = (childElement.bau === 3) ? 8 : 4;
-                                        }
-                                        const insertRecord = {
-                                            user_id: userId,
-                                            manager_id: mongoose.Types.ObjectId(userInfo.manager_id),
-                                            shore_type: userInfo.shore_type,
-                                            project_id: mongoose.Types.ObjectId(userInfo.project_id),
-                                            infra_tower_id: mongoose.Types.ObjectId(userInfo.infra_tower_id),
-                                            date: new Date(childElement.id),
-                                            bau: childElement.bau,
-                                            ot_planned: childElement.ot_planned,
-                                            ot_unplanned: childElement.ot_unplanned,
-                                            addtion_hours_planned: childElement.addtion_hours_planned,
-                                            addtion_hours_desc_planned: childElement.addtion_hours_desc_planned,
-                                            addtion_hours_unplanned: childElement.addtion_hours_unplanned,
-                                            addtion_hours_desc_unplanned: childElement.addtion_hours_desc_unplanned,
-                                            weekend: false,
-                                            billed_hour: billed_hour,
-                                            non_billed_hour: non_billed_hour
-                                        };
-                                        DailyTimeSheet(insertRecord).save(function () {});
-                                        isSave = true;
-                                    } else {
-                                        return;
+                            req.body[0].days.forEach(function (childElement, index) {
+                                if (childElement.bau !== 0) {
+                                    var billed_hour = 0;
+                                    var non_billed_hour = 0;
+                                    if (childElement.bau === 1 || childElement.bau === 2)
+                                    {
+                                        billed_hour = (childElement.bau === 1) ? 8 : 4;
                                     }
-                                });
+                                    if (childElement.bau === 3 || childElement.bau === 4)
+                                    {
+                                        non_billed_hour = (childElement.bau === 3) ? 8 : 4;
+                                    }
+                                    const insertRecord = {
+                                        user_id: userId,
+                                        manager_id: mongoose.Types.ObjectId(userInfo.manager_id),
+                                        shore_type: userInfo.shore_type,
+                                        project_id: mongoose.Types.ObjectId(userInfo.project_id),
+                                        infra_tower_id: mongoose.Types.ObjectId(userInfo.infra_tower_id),
+                                        date: new Date(childElement.id),
+                                        bau: childElement.bau,
+                                        ot_planned: childElement.ot_planned,
+                                        ot_unplanned: childElement.ot_unplanned,
+                                        addtion_hours_planned: childElement.addtion_hours_planned,
+                                        addtion_hours_desc_planned: childElement.addtion_hours_desc_planned,
+                                        addtion_hours_unplanned: childElement.addtion_hours_unplanned,
+                                        addtion_hours_desc_unplanned: childElement.addtion_hours_desc_unplanned,
+                                        weekend: (index === 0 || index === 1) ? true:false,
+                                        billed_hour: billed_hour,
+                                        non_billed_hour: non_billed_hour
+                                    };
+                                    DailyTimeSheet(insertRecord).save(function () {});
+                                    isSave = true;
+                                } else {
+                                    return;
+                                }
                             });
                             if (isSave) {
                                 res.status(config.httpCode.success).json({
@@ -99,24 +97,34 @@ exports.create = function (req, res) {
 };
 exports.findAll = function (req, res) {
     try {
-        const userId = req.decoded.id;
+        var userId;
+        var sortType = 1;
+        if (req.decoded.id === config.users.admin_employee_id_object) {
+            userId = { $ne: req.decoded.id };
+        } else {
+            userId = { $eq: req.decoded.id };
+        }
         if (req.body !== undefined && req.query) {
             if (req.query.start !== '') {
                 var startDate = new Date(req.query.start + 'T00:00:00.000+00:00').toISOString();
                 var endDate = new Date(req.query.end + 'T00:00:00.000+00:00').toISOString();
                 var conditions = {
-                    user_id: { $eq: userId },
-                    date: {
-                        "$gte": startDate,
-                        "$lte": endDate
-                    }
-                },
+                        user_id: userId,
+                        date: {
+                            "$gte": startDate,
+                            "$lte": endDate
+                        }
+                    },
                     page = 0,
                     limit = 8;
             } else {
+                sortType = -1;
                 var conditions = {
-                    user_id: { $eq: userId }
-                },
+                        user_id: userId,
+                        date: {
+                            "$gt": new Date('1920-02-06T00:00:00.000+00:00').toISOString()
+                        }
+                    },
                     page = 0,
                     limit = config.pagination.limit;
                 if (req.query.page) {
@@ -124,36 +132,50 @@ exports.findAll = function (req, res) {
                 }
             }
             DailyTimeSheet
-                .find(conditions).countDocuments(function (err, count) {
+                .find(conditions)
+                .countDocuments(function (err, count) {
                     if (err) {
                         res.status(config.httpCode.internalServerError).json({
                             error: err
                         });
                     } else {
-                        DailyTimeSheet.find(conditions)
-                            .populate('manager', '_id name')
-                            .populate('project', '_id name')
-                            .populate('infra', '_id name')                        
-                            .limit(limit)
-                            .skip(limit * page)
-                            .sort({ date: 1 })
-                            .exec(function (err, dailyTimeSheets) {
-                                if (err) {
-                                    res.status(config.httpCode.internalServerError).json({
-                                        error: err
-                                    });
-                                } else {
-                                    res.status(config.httpCode.success).json({
-                                        status: config.statusMessage.success,
-                                        statusMessage: config.statusMessage.time_sheet.fetched,
-                                        data: dailyTimeSheets,
-                                        metadata: {
-                                            totalRecords: count,
-                                            limit: limit
-                                        }
-                                    });
+                        if (count !== 0) {
+                            DailyTimeSheet.find(conditions)
+                                .populate('user', '_id name')
+                                .populate('manager', '_id name')
+                                .populate('project', '_id name')
+                                .populate('infra', '_id name')                        
+                                .limit(limit)
+                                .skip(limit * page)
+                                .sort({ date: sortType })
+                                .exec(function (err, dailyTimeSheets) {
+                                    if (err) {
+                                        res.status(config.httpCode.internalServerError).json({
+                                            error: err
+                                        });
+                                    } else {
+                                        res.status(config.httpCode.success).json({
+                                            status: config.statusMessage.success,
+                                            statusMessage: config.statusMessage.time_sheet.fetched,
+                                            data: dailyTimeSheets,
+                                            metadata: {
+                                                totalRecords: count,
+                                                limit: limit
+                                            }
+                                        });
+                                    }
+                                });
+                        } else {
+                            res.status(config.httpCode.success).json({
+                                status: config.statusMessage.success,
+                                statusMessage: config.statusMessage.time_sheet.fetched,
+                                data: [],
+                                metadata: {
+                                    totalRecords: count,
+                                    limit: limit
                                 }
                             });
+                        }       
                     }
                 });
         } else {

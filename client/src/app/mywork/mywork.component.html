@@ -4,7 +4,7 @@
                 <thead *ngIf="dailyTimeSheet">
                         <tr>
                                 <th colspan="8">
-                                        <table width="100%">
+                                        <table class="table100">
                                                 <tr>
                                                         <td>
                                                                 <form [formGroup]="timeSheetSearchForm"
@@ -13,7 +13,7 @@
                                                                                 <strong>Select Date To Fill Time Sheet:
                                                                                 </strong>
                                                                                 <div
-                                                                                        class="input-group datepicker-input col-sm-2">
+                                                                                        class="input-group datepicker-input col-sm-6">
                                                                                         <input class="form-control"
                                                                                                 placeholder="yyyy-mm-dd"
                                                                                                 name="dp" ngbDatepicker
@@ -37,6 +37,13 @@
                                                                                 Fill Default Settings
                                                                         </button>
                                                                 </form>
+                                                        </td>
+                                                        <td>
+                                                                <table class="table100">
+                                                                        <tr><td><label>Manager</label></td><td>Test</td></tr>
+                                                                        <tr><td><label>Project</label></td><td>Test</td></tr>
+                                                                        <tr><td><label>Infra Tower</label></td><td>Test</td></tr>
+                                                                </table>        
                                                         </td>
                                                 </tr>
                                         </table>
@@ -118,7 +125,7 @@
                                                                 </th>
                                                         </tr>
                                                         <tr>
-                                                                <th>OT Planned Addtion Hours</th>
+                                                                <th>OT Planned Hours</th>
                                                                 <th *ngFor="
                                         let day of timeSheetFill.get('days')[
                                             'controls'
@@ -158,7 +165,7 @@
                                                                 </th>
                                                         </tr>
                                                         <tr>
-                                                                <th>OT Planned Addtion Hours Description</th>
+                                                                <th>OT Planned Hours Description</th>
                                                                 <th *ngFor="
                                         let day of timeSheetFill.get('days')[
                                             'controls'
@@ -198,7 +205,7 @@
                                                                 </th>
                                                         </tr>
                                                         <tr>
-                                                                <th>OT Unplanned Addtion Hours</th>
+                                                                <th>OT Unplanned Hours</th>
                                                                 <th *ngFor="
                                         let day of timeSheetFill.get('days')[
                                             'controls'
@@ -239,7 +246,7 @@
                                                                 </th>
                                                         </tr>
                                                         <tr>
-                                                                <th>OT Unplanned Addtion Hours Description</th>
+                                                                <th>OT Unplanned Hours Description</th>
                                                                 <th *ngFor="
                                         let day of timeSheetFill.get('days')[
                                             'controls'
@@ -280,6 +287,7 @@
                 <thead>
                         <tr>
                                 <th>Date</th>
+                                <th>Name</th>
                                 <th>On/Off Shore</th>
                                 <th>Manager</th>
                                 <th>Project</th>
@@ -304,26 +312,27 @@
                               }
                 ">
                                 <th>{{ timeSheet.date | date: "dd/MM/yyyy" }}</th>
+                                <th>{{ (timeSheet.user.length > 0) ? timeSheet.user[0].name: 'N/A'}}</th>
                                 <th>{{ (timeSheet.shore_type === 0) ? 'OffShore': 'Onshore' }}</th>
-                                <th>{{ timeSheet.manager[0].name }}</th>
-                                <th>{{ timeSheet.project[0].name }}</th>
-                                <th>{{ (timeSheet.infra.lenght > 0) ? timeSheet.infra[0].name: 'N/A'}}</th>
+                                <th>{{ (timeSheet.manager.length > 0) ? timeSheet.manager[0].name: 'N/A'}}</th>
+                                <th>{{ (timeSheet.project.length > 0) ? timeSheet.project[0].name: 'N/A'}}</th>
+                                <th>{{ (timeSheet.infra.length > 0) ? timeSheet.infra[0].name: 'N/A'}}</th>
                                 <th>{{ timeSheet.billed_hour }}</th>
                                 <th>{{ timeSheet.non_billed_hour }}</th>
                                 <th>{{ timeSheet.ot_planned }}</th>
-                                <th>{{ (timeSheet.addtion_hours_desc_planned !== '') ? timeSheet.addtion_hours_desc_planned.name: 'N/A' }}</th>
-                                <th>{{ timeSheet.ot_unplanned }}</th>
                                 <th>{{ (timeSheet.addtion_hours_desc_planned !== '') ? timeSheet.addtion_hours_desc_planned: 'N/A' }}</th>
+                                <th>{{ timeSheet.ot_unplanned }}</th>
+                                <th>{{ (timeSheet.addtion_hours_desc_unplanned !== '') ? timeSheet.addtion_hours_desc_unplanned: 'N/A' }}</th>
                         </tr>
                         <tr *ngIf="!timeSheets.length">
-                                <td colspan="10">
+                                <td colspan="12">
                                         No Records found.
                                 </td>
                         </tr>
                 </tbody>
                 <tfoot *ngIf="totalRecords > itemPerPageIndex">
                         <tr>
-                                <td colspan="10">
+                                <td colspan="12">
                                         <pagination-controls id="paginationControlsId"
                                                 (pageChange)="pageChanged($event)" maxSize="9" directionLinks="true"
                                                 autoHide="true" responsive="true" previousLabel="Previous"

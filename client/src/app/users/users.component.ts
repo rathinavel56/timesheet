@@ -63,14 +63,12 @@ export class UserComponent extends AppComponent implements OnInit {
   updateFormInit() {
     this.updateForm = this.formBuilder.group({
       name: ['', Validators.required],
-      employee_id: ['', Validators.required],
-      role_id: ['', Validators.required],
       manager_id: ['', Validators.required],
       project_id: ['', Validators.required],
       infra_tower_id: [''],
-      is_active: ['', Validators.required]
+      role_id: [''],
+      is_active: ['']
     });
-    this.updateForm.controls['is_active'].setValue(true);
   }
 
   searchFormInit() {

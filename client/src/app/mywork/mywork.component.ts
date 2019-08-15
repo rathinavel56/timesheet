@@ -136,7 +136,7 @@ export class MyworkComponent implements OnInit {
           this.serviceResponse = data;
           if (this.serviceResponse.status === AppConst.SERVICE_STATUS.SUCCESS) {
             this.toastMessage.success(null, this.serviceResponse.statusMessage);
-            if (!this.dailyTimeSheet) {
+            if (this.dailyTimeSheet) {
               this.getTimeSheet('', '');
             }
           } else {
@@ -178,13 +178,15 @@ export class MyworkComponent implements OnInit {
       }
       let timeSheetFilled = [];
       if (timeSheetData.length > 0) {
-        timeSheetFilled = timeSheetData.filter(function (element) {
-          return ((formattedDated + 'T00:00:00.000Z') === element.date);
-        });
+        if (!this.defaultTimeSheet) {
+          timeSheetFilled = timeSheetData.filter(function (element) {
+            return ((formattedDated + 'T00:00:00.000Z') === element.date);
+          });
+        }
       }
       const dayName = (this.dailyTimeSheet) ? day + ' ' + monthNames[month] + ' ' +
         currentDate.getFullYear() + ' (' + weekday[currentDate.getDay()] + ')' : ' (' + weekday[currentDate.getDay()] + ')';
-      if (timeSheetFilled.length > 0) {
+      if (!this.defaultTimeSheet && timeSheetFilled.length > 0) {
         setWeek.push(this.formBuilder.group({
           id: formattedDated,
           name: dayName,
@@ -197,6 +199,20 @@ export class MyworkComponent implements OnInit {
           addtion_hours_unplanned: (timeSheetFilled[0].addtion_hours_unplanned !== null) ? timeSheetFilled[0].addtion_hours_unplanned : '',
           addtion_hours_desc_unplanned: (timeSheetFilled[0].addtion_hours_desc_unplanned !== null) ?
             timeSheetFilled[0].addtion_hours_desc_unplanned : ''
+        }));
+      } else if (this.defaultTimeSheet) {
+        setWeek.push(this.formBuilder.group({
+          id: formattedDated,
+          name: dayName,
+          bau: timeSheetData[i].bau,
+          ot_planned: timeSheetData[i].ot_planned,
+          addtion_hours_planned: (timeSheetData[i].addtion_hours_planned !== null) ? timeSheetData[i].addtion_hours_planned : '',
+          addtion_hours_desc_planned: (timeSheetData[i].addtion_hours_desc_planned !== null) ?
+          timeSheetData[i].addtion_hours_desc_planned : '',
+          ot_unplanned: timeSheetData[i].ot_unplanned,
+          addtion_hours_unplanned: (timeSheetData[i].addtion_hours_unplanned !== null) ? timeSheetData[i].addtion_hours_unplanned : '',
+          addtion_hours_desc_unplanned: (timeSheetData[i].addtion_hours_desc_unplanned !== null) ?
+          timeSheetData[i].addtion_hours_desc_unplanned : ''
         }));
       } else {
         setWeek.push(this.formBuilder.group({

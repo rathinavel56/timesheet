@@ -36,8 +36,7 @@ exports.login = function (req, res) {
                                     const requestPassword = req.body.password;
                                     if (bcrypt.compareSync(requestPassword, userInfo.password)) {
                                         const tokenInfo = {
-                                            id: userInfo._id,
-                                            role_id: userInfo.role[0]._id.toString()
+                                            id: userInfo._id
                                         };
                                         const token = jwt.sign(tokenInfo, config.secret, { expiresIn: config.tokenLife });
                                         const userData = {
@@ -120,7 +119,7 @@ exports.register = function (req, res) {
                         });
                     }
                 } else {
-                    const token = jwt.sign({ id: resultSet._id, role_id: resultSet.role_id }, config.secret, { expiresIn: config.tokenLife });
+                    const token = jwt.sign({ id: resultSet._id }, config.secret, { expiresIn: config.tokenLife });
                     const userData = {
                         id: resultSet._id,
                         role: 'User',
@@ -280,13 +279,12 @@ exports.findAllManagers = function (req, res) {
         if (req.body) {
             User
                 .find({
-                    role_id: { $ne: mongoose.Types.ObjectId(config.roles[2]._id) },
+                    role_id: { $ne: mongoose.Types.ObjectId(config.roles[1]._id) },
                     is_active: { $eq: true }
                 })
                 .select('name _id')
                 .exec(function (err, users) {
                     if (err) {
-
                         res.status(config.httpCode.internalServerError).json({
                             error: err
                         });
@@ -356,7 +354,7 @@ exports.update = function (req, res) {
         if (req.body) {
             var userUpdate;
             var condition;
-            if (config.roles[0]._id === req.decoded.role_id) {
+            if (req.decoded.id === config.users.admin_employee_id_object) {
                 condition = {
                     employee_id: { $eq: req.body.employee_id }
                 };

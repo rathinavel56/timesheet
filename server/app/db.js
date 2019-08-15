@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const DailyTimeSheet = require('./models/DailyTimeSheet');
 const Role = require('./models/Role');
 const SecurityQuestion = require('./models/SecurityQuestion');
 const User = require('./models/User');
@@ -16,7 +17,8 @@ mongoose.connect(dbUri, {
         /* // Clean Up
         User.deleteMany({}, function () {});
         Role.deleteMany({}, function () {});
-        SecurityQuestion.deleteMany({}, function () {});*/
+        SecurityQuestion.deleteMany({}, function () {});
+        DailyTimeSheet.deleteMany({}, function () {});*/
         var role_id;
         var securityQuestion_id;
         User
