@@ -10,7 +10,7 @@ exports.create = function (req, res) {
         DailyTimeSheet.find({
             "date": {
                 "$gte": startDate.toISOString(),
-                "$lt": endDate.toISOString()
+                "$lte": endDate.toISOString()
             }
         })
         .populate('user', '_id name')
@@ -18,11 +18,6 @@ exports.create = function (req, res) {
         .populate('infra', '_id name')
         .sort({ date: 1 })
         .exec(function (err, dailyTimeSheet) {
-            return res.status(config.httpCode.success).json({
-                status: config.statusMessage.success,
-                statusMessage: config.statusMessage.user.success,
-                data: dailyTimeSheet
-            });
             if (dailyTimeSheet.length > 0) {
                 const conditions = {
                     employee_id: { $ne: 0 },
@@ -131,7 +126,7 @@ exports.create = function (req, res) {
                                 }], {
                                         skipHeader: true,
                                         origin: "G" + (originCell + 2)
-                                    });
+                                    });    
                                 dailyTimeSheet.filter(function (el) {
                                     if (value._id.toString() === el.user_id.toString()) {
                                         var cellId = dateArray.filter(function (value) {
@@ -179,7 +174,6 @@ exports.create = function (req, res) {
                                     e: { r: 2, c: 0 }
                                 });*/
                                 originCell = (originCell + 3);
-                                populateDate = false;
                             });
                             // ws['A3'] = [];
                             // ws['A3'].c = [{a:"SheetJS", t:"I'm a little comment, short and stout!"}];
@@ -187,16 +181,16 @@ exports.create = function (req, res) {
                             var wopts = { bookType: 'xlsx', type: 'buffer' };
                             XLSX.utils.book_append_sheet(wb, ws, "People");
                             var wbout = Buffer.from(XLSX.write(wb, wopts));
-                            var filename = "myDataFile.xlsx";
-                            res.setHeader('Content-Disposition', 'attachment; filename=' + filename);
-                            res.type('application/octet-stream');
+                            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                            res.setHeader('Content-Disposition', 'attachment; filename=TimeSheet.xlsx');
+                            // res.type('application/octet-stream');
                             res.send(wbout);
                         }
                     });
             } else {
                 return res.status(config.httpCode.success).json({
-                    status: config.statusMessage.success,
-                    statusMessage: config.statusMessage.user.success
+                    status: config.statusMessage.failed,
+                    statusMessage: config.statusMessage.time_sheet.exportFailed
                 });
             }
         });
@@ -208,6 +202,7 @@ exports.create = function (req, res) {
         };
         res.status(config.httpCode.internalServerError).json({
             statusMessage: config.statusMessage.internalServerError + catchError.id,
+            err: err
         });
     }
 };

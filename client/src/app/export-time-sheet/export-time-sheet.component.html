@@ -21,6 +21,9 @@
                                                                 class="fa fa-calendar"></span>
                                                 </button>
                                         </div>
+                                        <div *ngIf="submitted && exportForm.get('start').value.length === 0" class="invalid-feedback-show">
+                                                Required
+                                        </div>
                                 </div>
                         </div>
                         <div class="col-sm-4">
@@ -41,6 +44,9 @@
                                                         <span
                                                                 class="fa fa-calendar"></span>
                                                 </button>
+                                        </div>
+                                        <div *ngIf="submitted && exportForm.get('end').value.length === 0" class="invalid-feedback-show">
+                                                Required
                                         </div>
                                 </div>
                         </div>

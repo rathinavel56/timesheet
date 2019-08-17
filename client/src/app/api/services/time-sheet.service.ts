@@ -31,8 +31,8 @@ export class TimeSheetService {
     return this.apiService.httpGet(dailyTimeSheet);
   }
 
-  exportRecord(timeSheetForm: FormGroup): Observable<TimeSheet> {
+  exportRecord(timeSheetForm: any): Observable<TimeSheet> {
     const exportTimeSheet: string = AppConst.STORE_API_PATHS.EXPORTTIMESHEET;
-    return this.apiService.httpPost(exportTimeSheet, timeSheetForm.value);
+    return this.apiService.httpPost(exportTimeSheet, timeSheetForm);
   }
 }

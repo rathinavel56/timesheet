@@ -65,7 +65,9 @@
             "success": "Time sheet created successfully",
             "failed": "Time sheet failed to create",
             "requestEmpty": "Time sheet can't be created due to empty object",
-            "fetched": "Time sheet fetched successfully"
+            "fetched": "Time sheet fetched successfully",
+            "exportSuccess": "Time sheet exported successfully",
+            "exportFailed": "No Time sheet data"
         }
     },
     "mongoCode": {
@@ -152,11 +154,11 @@
             "name": "SL"
         },
         {
-            "id": 7,
+            "id": 8,
             "name": "Wo"
         },
         {
-            "id": 8,
+            "id": 9,
             "name": "Holiday"
         }
     ],
