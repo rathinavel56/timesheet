@@ -177,14 +177,16 @@ exports.create = function (req, res) {
                             });
                             // ws['A3'] = [];
                             // ws['A3'].c = [{a:"SheetJS", t:"I'm a little comment, short and stout!"}];
+                            var ws = XLSX.utils.json_to_sheet([
+                                { A: "Emp ID", B: "Name", C: "On/OffShore", D: "Billability", E: "AA Manager", F: "Infra Tower", G: "Date" }
+                            ], { header: ["A", "B", "C", "D", "E", "F", "G"], skipHeader: true, origin: "A2" });
                             var wb = XLSX.utils.book_new();
                             var wopts = { bookType: 'xlsx', type: 'buffer' };
                             XLSX.utils.book_append_sheet(wb, ws, "People");
                             var wbout = Buffer.from(XLSX.write(wb, wopts));
                             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                             res.setHeader('Content-Disposition', 'attachment; filename=TimeSheet.xlsx');
-                            // res.type('application/octet-stream');
-                            res.send(wbout);
+                            res.end(wbout);
                         }
                     });
             } else {

@@ -16,6 +16,7 @@ export class ExportTimeSheetComponent implements OnInit {
   public exportForm: FormGroup;
   public submitted: Boolean;
   public serviceResponse: any;
+  public windowEvent: any = window;
 
   constructor(private formBuilder: FormBuilder,
     private toastMessage: ToastMessage,
@@ -57,11 +58,11 @@ export class ExportTimeSheetComponent implements OnInit {
                 this.toastMessage.error(null, this.serviceResponse.statusMessage);
               } else {
                 const blob = new Blob([this.serviceResponse], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                const url = (window.webkitURL || window.URL).createObjectURL(blob);
+                const url = (this.windowEvent.webkitURL || this.windowEvent.URL).createObjectURL(blob);
                 let anchor;
                 anchor = document.createElement('a');
                 anchor.download = "TimeSheet.xlsx";
-                anchor.href = (window.webkitURL || window.URL).createObjectURL(blob);
+                anchor.href = url;
                 anchor.dataset.downloadurl = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', anchor.download, anchor.href].join(':');
                 anchor.click();
               }
