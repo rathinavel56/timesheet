@@ -96,6 +96,15 @@ export class AppConst {
         name: 'Yes'
     }];
 
+    public static readonly SHORE_TYPE = [{
+        id: 0,
+        name: 'Offshore'
+    },
+    {
+        id: 1,
+        name: 'Onshore'
+    }];
+
     public static readonly MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];

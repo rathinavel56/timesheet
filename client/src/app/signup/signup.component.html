@@ -19,7 +19,20 @@
                             placeholder="{{ 'Enter Your Emp Name' | translate }}"
                             [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
                         <div *ngIf="submitted && !!f.name?.errors" class="invalid-feedback-show">
-                            <div *ngIf="!!f.name?.errors.required">{{ 'Emp Name is required' | translate }}</div>
+                            <div *ngIf="!!f.name?.errors.required">{{ 'Emp name is required' | translate }}</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <select type="text" formControlName="shore_type"
+                            class="form-control input-underline input-lg input-select"
+                            [ngClass]="{ 'is-invalid': submitted && f.shore_type.errors }">
+                            <option value="">{{ 'Select the shore type' | translate }}</option>
+                            <option *ngFor="let shoreType of shoreTypes"
+                                [value]="shoreType.id">{{shoreType.name}}</option>
+                        </select>
+                        <div *ngIf="submitted && !!f.shore_type?.errors" class="invalid-feedback-show">
+                            <div *ngIf="!!f.shore_type?.errors.required">
+                                {{ 'Shore Type is required' | translate }}</div>
                         </div>
                     </div>
                     <div class="form-group">

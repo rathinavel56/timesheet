@@ -22,6 +22,7 @@ import { Router } from '@angular/router';
 export class SignupComponent implements OnInit {
     public registerForm: FormGroup;
     public submitted: Boolean;
+    public shoreTypes: any;
     public serviceResponse: any;
     public securityQuestions: SecurityQuestionList = new SecurityQuestionList();
     public user: User = new User();
@@ -43,14 +44,16 @@ export class SignupComponent implements OnInit {
         this.registerForm = this.formBuilder.group({
             employee_id: ['', Validators.required],
             name: ['', Validators.required],
-            security_question_id: ['', [Validators.required]],
+            shore_type: ['', [Validators.required]],
             manager_id: ['', [Validators.required]],
             project_id: ['', [Validators.required]],
             infra_tower_id: [''],
+            security_question_id: ['', [Validators.required]],
             security_question_answer: ['', [Validators.required]],
             password: ['', [Validators.required, Validators.minLength(6)]],
             confirm_password: ['', [Validators.required, Validators.minLength(6)]]
         }, { validator: this.pwdMatchValidator });
+        this.shoreTypes = AppConst.SHORE_TYPE;
     }
 
     getSecurityQuestion() {

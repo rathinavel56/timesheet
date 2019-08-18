@@ -38,18 +38,20 @@ exports.create = function (req, res) {
                             ], { header: ["A", "B", "C", "D", "E", "F", "G"], skipHeader: true, origin: "A2" });
                             ws['!merges'] = [{ s: { r: 1, c: 0 }, e: { r: 2, c: 0 } }, { s: { r: 1, c: 1 }, e: { r: 2, c: 1 } }, { s: { r: 1, c: 2 }, e: { r: 2, c: 2 } }, { s: { r: 1, c: 3 }, e: { r: 2, c: 3 } }, { s: { r: 1, c: 4 }, e: { r: 2, c: 4 } }, { s: { r: 1, c: 5 }, e: { r: 2, c: 5 } }, { s: { r: 1, c: 6 }, e: { r: 2, c: 6 } }];
                             ws['!autofilter'] = { ref: "A3:G3" };
-                            // ws['!merges'] = [];
                             var originCell = 4;
                             const weekday = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                             var dates = getDates(startDate, endDate);
                             var dateCounter = 8;
                             var dateArray = [];
                             var convertToNumberToExcel;
+                            var weekDays = [];
+                            var weekendDays = [];
                             dates.forEach(function (currentDate) {
                                 const getDate = currentDate.getDate();
                                 const day = ((getDate < 10) ? '0' + getDate : getDate);
                                 const month = (currentDate.getMonth() + 1);
                                 const dateFormatted = currentDate.getFullYear() + '-' + ((month < 10) ? '0' + month : month) + '-' + day;
+                                const dayIndex = new Date(dateFormatted).getDay();
                                 convertToNumberToExcel = convertToNumberingScheme(dateCounter);
                                 XLSX.utils.sheet_add_json(ws, [{
                                     A: getDate
@@ -58,7 +60,7 @@ exports.create = function (req, res) {
                                         origin: convertToNumberToExcel + '2'
                                     });
                                 XLSX.utils.sheet_add_json(ws, [{
-                                    A: weekday[new Date(dateFormatted).getDay()]
+                                    A: weekday[dayIndex]
                                 }], {
                                         skipHeader: true,
                                         origin: convertToNumberToExcel + '3'
@@ -99,6 +101,7 @@ exports.create = function (req, res) {
                                     origin: staticColumn + '3'
                                 });
                             users.forEach(function (value) {
+                                console.log('value', value);
                                 XLSX.utils.sheet_add_json(ws, [{
                                     A: value.employee_id,
                                     B: value.name,
@@ -160,38 +163,24 @@ exports.create = function (req, res) {
                                                     origin: cellId[0].cell + (originCell + 2)
                                                 });
                                         }
-                                        //Total BL  =SUM(H4:AK4)
-                                        //Total NBL =SUM((COUNTIF(H4:AK4,"8N")*8)+(COUNTIF(H4:AK4,"4N"))*4)
-                                        // BL =(AL4)/8
-                                        // EL  =COUNTIF(H4:AK4,"EL")
-                                        //PL =COUNTIF(H4:AK4,"PL")
-                                        //Weekday =SUM(J5:N5,Q5:U5,X5:AB5,AE5:AI5)
-                                        // Weekend = =SUM(H5:I5,O5:P5,V5:W5,AC5:AD5,AJ5:AK5)
-                                        // Calledout =$AL$6
                                     }
                                 });
-
-
-                                /*ws['!merges'].push({
-                                    s: { r: originCell, c: 0 },
-                                    e: { r: 2, c: 0 }
-                                });*/
                                 originCell = (originCell + 3);
                             });
-                            // A: { f: 'SUM(K4:R4)',c: [{a:'SheetJS', t:'m a little comment, short and stout!'}]},
-                            // https://github.com/SheetJS/js-xlsx/issues/817
-                            for(i = 4; i <= (originCell-3); i++) {
+                            for (i = 4; i <= (originCell-3); i++) {
+                                var i1 = (i + 1);
+                                var i2 = (i + 2); 
                                 XLSX.utils.sheet_add_json(ws, [{
-                                    A: { f: 'SUM(H' + i + ':' + convertToNumberToExcel + i + ')'},
+                                    A: { f: 'SUM((COUNTIF(H' + i + ':' + convertToNumberToExcel + i +',"8")*8)+(COUNTIF(H' + i + ':' + convertToNumberToExcel + i +',"4"))*4)'},
                                     B: { f: 'SUM((COUNTIF(H' + i + ':' + convertToNumberToExcel + i +',"8N")*8)+(COUNTIF(H' + i + ':' + convertToNumberToExcel + i +',"4N"))*4)'},
                                     C: { f: 'SUM(H' + i + ':' + convertToNumberToExcel + i + ')'},
                                     D: { f: 'COUNTIF(H' + i + ':' + convertToNumberToExcel + i + ',"EL")'},
                                     E: { f: 'COUNTIF(H' + i + ':' + convertToNumberToExcel + i + ',"PL")'},
                                     F: { f: 'COUNTIF(H' + i + ':' + convertToNumberToExcel + i + ',"SL")'},
                                     G: { f: 'COUNTIF(H' + i + ':' + convertToNumberToExcel + i + ',"Holiday")'},
-                                    H: { f: 'SUM(H' + i + ':' + convertToNumberToExcel + i + ')'},
-                                    I: { f: 'SUM(H' + i + ':' + convertToNumberToExcel + i + ')'},
-                                    K: { f: 'SUM(H' + i + ':' + convertToNumberToExcel + i + ')'}
+                                    H: { f: '=SUM(SUMIF(H3:' + convertToNumberToExcel + '3,"Mon",H' + i1 + ':' + convertToNumberToExcel + i1 + ')+SUMIF(H3:' + convertToNumberToExcel + '3,"Tue",H' + i1 + ':' + convertToNumberToExcel + i1 + ')+SUMIF(H3:' + convertToNumberToExcel + '3,"Wed",H' + i1 + ':' + convertToNumberToExcel + i1 + ')+SUMIF(H3:' + convertToNumberToExcel + '3,"Thu",H' + i1 + ':' + convertToNumberToExcel + i1 + ')+SUMIF(H3:' + convertToNumberToExcel + '3,"Fri",H' + i1 + ':' + convertToNumberToExcel + i1 + '))'},
+                                    I: { f: '=SUM(SUMIF(H3:' + convertToNumberToExcel + '3,"Sat",H' + i1 + ':' + convertToNumberToExcel + i1 + ')+SUMIF(H3:' + convertToNumberToExcel + '3,"Sun",H' + i1 + ':' + convertToNumberToExcel + i1 + '))'},
+                                    K: { f: 'SUM(H' + i2 + ':' + convertToNumberToExcel + i2 + ')'},
                                 }], {
                                         skipHeader: true,
                                         origin: convertToNumberingScheme(dateCounter) + i
@@ -199,12 +188,6 @@ exports.create = function (req, res) {
 
                                 i = (i + 2);    
                             }
-                            ws['!ref'] = XLSX.utils.encode_range({
-                                s: { c: 7, r: 4 },
-                                e: { c: 12, r: 4 }
-                            });
-                            // ws['A3'] = [];
-                            // ws['A3'].c = [{a:"SheetJS", t:"I'm a little comment, short and stout!"}];
                             var wb = XLSX.utils.book_new();
                             // var wopts = { bookType: 'xlsx', type: 'buffer' };
                             XLSX.utils.book_append_sheet(wb, ws, "People");

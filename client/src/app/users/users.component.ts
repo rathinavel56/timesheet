@@ -36,6 +36,7 @@ export class UserComponent extends AppComponent implements OnInit {
   public searchFormSubmitted: Boolean;
   public projects: Project[] = [];
   public infraTowers: InfraTower[] = [];
+  public shoreTypes: any;
 
   constructor(private formBuilder: FormBuilder,
     private projectService: ProjectService,
@@ -52,17 +53,19 @@ export class UserComponent extends AppComponent implements OnInit {
       this.getRoles();
       this.getUserRoles('page=' + this.currentPageIndex);
       this.searchFormInit();
+      this.getProjects();
+      this.findAllManagers();
     } else {
       this.getUserById();
     }
-    this.findAllManagers();
-    this.getProjects();
     this.updateFormInit();
+    this.shoreTypes = AppConst.SHORE_TYPE;
   }
 
   updateFormInit() {
     this.updateForm = this.formBuilder.group({
       name: ['', Validators.required],
+      shore_type: ['', Validators.required],
       manager_id: ['', Validators.required],
       project_id: ['', Validators.required],
       infra_tower_id: [''],
@@ -134,6 +137,7 @@ export class UserComponent extends AppComponent implements OnInit {
               this.updateForm.controls['project_id'].setValue(this.user.project_id);
             } else {
               this.updateForm.controls['project_id'].setValue(this.projects[0]._id);
+              this.updateForm.controls['shore_type'].setValue(0);
             }
             this.getInfraTowers();
           }
@@ -166,6 +170,9 @@ export class UserComponent extends AppComponent implements OnInit {
         this.serviceResponse = data;
         this.user = this.serviceResponse.data;
         this.updateForm.controls['name'].setValue(this.user.name);
+        this.updateForm.controls['shore_type'].setValue(this.user.shore_type);
+        this.getProjects();
+        this.findAllManagers();
       });
   }
 
@@ -220,7 +227,7 @@ export class UserComponent extends AppComponent implements OnInit {
 
   updateUser(user: User) {
     this.updateForm.controls['name'].setValue(user.name);
-    this.updateForm.controls['employee_id'].setValue(user.employee_id);
+    this.updateForm.controls['shore_type'].setValue(user.shore_type);
     this.updateForm.controls['role_id'].setValue(user.role_id);
     this.updateForm.controls['manager_id'].setValue(user.manager_id);
     this.updateForm.controls['is_active'].setValue(user.is_active);

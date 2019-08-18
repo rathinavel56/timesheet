@@ -319,7 +319,7 @@ exports.findById = function (req, res) {
                 .findOne({
                     _id: { $eq: req.decoded.id }
                 })
-                .select('name role_id manager_id project_id infra_tower_id is_active')
+                .select('name role_id manager_id project_id infra_tower_id shore_type is_active')
                 .exec(function (err, user) {
                     if (err) {
                         res.status(config.httpCode.internalServerError).json({
@@ -362,6 +362,7 @@ exports.update = function (req, res) {
                     $set: {
                             role_id: mongoose.Types.ObjectId(req.body.role_id),
                             name: req.body.name,
+                            shore_type: req.body.shore_type,
                             project_id: mongoose.Types.ObjectId(req.body.project_id),
                             infra_tower_id: mongoose.Types.ObjectId(req.body.infra_tower_id),
                             manager_id: mongoose.Types.ObjectId(req.body.manager_id),
@@ -375,6 +376,7 @@ exports.update = function (req, res) {
                 userUpdate = {
                     $set: {
                             name: req.body.name,
+                            shore_type: req.body.shore_type,
                             project_id: mongoose.Types.ObjectId(req.body.project_id),
                             infra_tower_id: mongoose.Types.ObjectId(req.body.infra_tower_id),
                             manager_id: mongoose.Types.ObjectId(req.body.manager_id)

@@ -8,23 +8,32 @@ import { Router } from '@angular/router';
 })
 export class AppComponent implements OnInit {
     public session: any;
+    public windowEvent: any = window;
     public windowTop: any = window.top;
 
     constructor(public router: Router) {
     }
 
     ngOnInit() {
-        console.log(this.router.url);
-        /*this.session = this.getSessionDetail();
+        this.session = this.getSessionDetail();
         if (this.session != null && this.session !== '') {
+            let nonLoginUrl = [
+                '/login',
+                '/signup',
+                '/forgot_password'
+            ];
             if (this.session.user.role === 'Admin') {
-                this.router.navigate(['/settings']);
+                if (nonLoginUrl.indexOf(this.windowEvent.location.pathname) > -1) {
+                    this.router.navigate(['/users']);
+                }
             } else {
-                this.router.navigate(['/mywork']);
+                if (nonLoginUrl.indexOf(this.windowEvent.location.pathname) > -1) {
+                    this.router.navigate(['/mywork']);
+                }
             }
         } else {
             this.router.navigate(['/login']);
-        }*/
+        }
     }
 
     getSessionDetail() {
