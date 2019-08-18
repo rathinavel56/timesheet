@@ -178,10 +178,6 @@ exports.create = function (req, res) {
                                 });*/
                                 originCell = (originCell + 3);
                             });
-                            ws['!ref'] = XLSX.utils.encode_range({
-                                s: { c: 7, r: 4 },
-                                e: { c: 12, r: 4 }
-                            });
                             // A: { f: 'SUM(K4:R4)',c: [{a:'SheetJS', t:'m a little comment, short and stout!'}]},
                             for(i = 4; i <= (originCell-3); i++) {
                                 XLSX.utils.sheet_add_json(ws, [{
@@ -199,8 +195,13 @@ exports.create = function (req, res) {
                                         skipHeader: true,
                                         origin: convertToNumberingScheme(dateCounter) + i
                                     });
+
                                 i = (i + 2);    
                             }
+                            ws['!ref'] = XLSX.utils.encode_range({
+                                s: { c: 7, r: 4 },
+                                e: { c: 12, r: 4 }
+                            });
                             // ws['A3'] = [];
                             // ws['A3'].c = [{a:"SheetJS", t:"I'm a little comment, short and stout!"}];
                             var wb = XLSX.utils.book_new();
