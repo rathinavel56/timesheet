@@ -179,6 +179,7 @@ exports.create = function (req, res) {
                                 originCell = (originCell + 3);
                             });
                             // A: { f: 'SUM(K4:R4)',c: [{a:'SheetJS', t:'m a little comment, short and stout!'}]},
+                            // https://github.com/SheetJS/js-xlsx/issues/817
                             for(i = 4; i <= (originCell-3); i++) {
                                 XLSX.utils.sheet_add_json(ws, [{
                                     A: { f: 'SUM(H' + i + ':' + convertToNumberToExcel + i + ')'},
