@@ -18,6 +18,8 @@ docker run -it -d --name mongodb --network docker_demo -p 27117:27117 -v mongoda
 npm install -g -f angular-cli
 netstat -a -n | find "27017"
 
+mongod --journal --storageEngine=mmapv1 --dbpath D:/rathinavel_workspace/db
+
 https://github.com/angular/angular/issues/14041
 https://medium.com/better-programming/improving-angular-ngfor-performance-through-trackby-ae4cf943b878
 https://css-tricks.com/how-to-create-an-ie-only-stylesheet/

@@ -33,24 +33,24 @@ exports.create = function (req, res) {
                                 error: err
                             });
                         } else {
-                            /* Initial row */
                             var ws = XLSX.utils.json_to_sheet([
                                 { A: "Emp ID", B: "Name", C: "On/OffShore", D: "Billability", E: "AA Manager", F: "Infra Tower", G: "Date" }
                             ], { header: ["A", "B", "C", "D", "E", "F", "G"], skipHeader: true, origin: "A2" });
-                            // ws['!merges'] = [{ s: { r: 1, c: 0 }, e: { r: 2, c: 0 } }, { s: { r: 1, c: 1 }, e: { r: 2, c: 1 } }, { s: { r: 1, c: 2 }, e: { r: 2, c: 2 } }, { s: { r: 1, c: 3 }, e: { r: 2, c: 3 } }, { s: { r: 1, c: 4 }, e: { r: 2, c: 4 } }, { s: { r: 1, c: 5 }, e: { r: 2, c: 5 } }, { s: { r: 1, c: 6 }, e: { r: 2, c: 6 } }];
+                            ws['!merges'] = [{ s: { r: 1, c: 0 }, e: { r: 2, c: 0 } }, { s: { r: 1, c: 1 }, e: { r: 2, c: 1 } }, { s: { r: 1, c: 2 }, e: { r: 2, c: 2 } }, { s: { r: 1, c: 3 }, e: { r: 2, c: 3 } }, { s: { r: 1, c: 4 }, e: { r: 2, c: 4 } }, { s: { r: 1, c: 5 }, e: { r: 2, c: 5 } }, { s: { r: 1, c: 6 }, e: { r: 2, c: 6 } }];
                             ws['!autofilter'] = { ref: "A3:G3" };
-                            ws['!merges'] = [];
+                            // ws['!merges'] = [];
                             var originCell = 4;
                             const weekday = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                             var dates = getDates(startDate, endDate);
                             var dateCounter = 8;
                             var dateArray = [];
+                            var convertToNumberToExcel;
                             dates.forEach(function (currentDate) {
                                 const getDate = currentDate.getDate();
                                 const day = ((getDate < 10) ? '0' + getDate : getDate);
                                 const month = (currentDate.getMonth() + 1);
                                 const dateFormatted = currentDate.getFullYear() + '-' + ((month < 10) ? '0' + month : month) + '-' + day;
-                                const convertToNumberToExcel = convertToNumberingScheme(dateCounter);
+                                convertToNumberToExcel = convertToNumberingScheme(dateCounter);
                                 XLSX.utils.sheet_add_json(ws, [{
                                     A: getDate
                                 }], {
@@ -82,15 +82,18 @@ exports.create = function (req, res) {
                                     skipHeader: true,
                                     origin: staticColumn + '2'
                                 });
+                                
                             XLSX.utils.sheet_add_json(ws, [{
                                 A: 'Hrs',
                                 B: 'Hrs',
                                 C: 'Days',
                                 D: 'Days',
                                 E: 'Days',
-                                F: 'Planned OT',
-                                G: 'Planned OT',
-                                H: 'OT',
+                                F: 'Days',
+                                G: 'Days',
+                                H: 'Planned OT',
+                                I: 'Planned OT',
+                                K: 'OT',
                             }], {
                                     skipHeader: true,
                                     origin: staticColumn + '3'
@@ -175,18 +178,43 @@ exports.create = function (req, res) {
                                 });*/
                                 originCell = (originCell + 3);
                             });
+                            ws['!ref'] = XLSX.utils.encode_range({
+                                s: { c: 7, r: 4 },
+                                e: { c: 12, r: 4 }
+                            });
+                            // A: { f: 'SUM(K4:R4)',c: [{a:'SheetJS', t:'m a little comment, short and stout!'}]},
+                            for(i = 4; i <= (originCell-3); i++) {
+                                XLSX.utils.sheet_add_json(ws, [{
+                                    A: { f: 'SUM(H' + i + ':' + convertToNumberToExcel + i + ')'},
+                                    B: { f: 'SUM((COUNTIF(H' + i + ':' + convertToNumberToExcel + i +',"8N")*8)+(COUNTIF(H' + i + ':' + convertToNumberToExcel + i +',"4N"))*4)'},
+                                    C: { f: 'SUM(H' + i + ':' + convertToNumberToExcel + i + ')'},
+                                    D: { f: 'COUNTIF(H' + i + ':' + convertToNumberToExcel + i + ',"EL")'},
+                                    E: { f: 'COUNTIF(H' + i + ':' + convertToNumberToExcel + i + ',"PL")'},
+                                    F: { f: 'COUNTIF(H' + i + ':' + convertToNumberToExcel + i + ',"SL")'},
+                                    G: { f: 'COUNTIF(H' + i + ':' + convertToNumberToExcel + i + ',"Holiday")'},
+                                    H: { f: 'SUM(H' + i + ':' + convertToNumberToExcel + i + ')'},
+                                    I: { f: 'SUM(H' + i + ':' + convertToNumberToExcel + i + ')'},
+                                    K: { f: 'SUM(H' + i + ':' + convertToNumberToExcel + i + ')'}
+                                }], {
+                                        skipHeader: true,
+                                        origin: convertToNumberingScheme(dateCounter) + i
+                                    });
+                                i = (i + 2);    
+                            }
                             // ws['A3'] = [];
                             // ws['A3'].c = [{a:"SheetJS", t:"I'm a little comment, short and stout!"}];
-                            var ws = XLSX.utils.json_to_sheet([
-                                { A: "Emp ID", B: "Name", C: "On/OffShore", D: "Billability", E: "AA Manager", F: "Infra Tower", G: "Date" }
-                            ], { header: ["A", "B", "C", "D", "E", "F", "G"], skipHeader: true, origin: "A2" });
                             var wb = XLSX.utils.book_new();
-                            var wopts = { bookType: 'xlsx', type: 'buffer' };
+                            // var wopts = { bookType: 'xlsx', type: 'buffer' };
                             XLSX.utils.book_append_sheet(wb, ws, "People");
-                            var wbout = Buffer.from(XLSX.write(wb, wopts));
+                            XLSX.writeFile(wb, "sheetjs.xlsx");
+                            // var wbout = Buffer.from(XLSX.write(wb, wopts));
+                            // res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                            // res.setHeader('Content-Disposition', 'attachment; filename=TimeSheet.xlsx');
+                            res.end("Hi");
+                           /* var wbout = Buffer.from(XLSX.write(wb, wopts));
                             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                             res.setHeader('Content-Disposition', 'attachment; filename=TimeSheet.xlsx');
-                            res.end(wbout);
+                            res.end(wbout);*/
                         }
                     });
             } else {
