@@ -5,7 +5,9 @@ const SecurityQuestion = require('./models/SecurityQuestion');
 const User = require('./models/User');
 const dbUri = 'mongodb://localhost:27017/timesheet_dev';
 const config = require('./config');
+const logger = require('./utils/logger');
 mongoose.Promise = global.Promise;
+logger.error('asddsasad');
 mongoose.connect(dbUri, {
     useCreateIndex: true,
     useNewUrlParser: true
