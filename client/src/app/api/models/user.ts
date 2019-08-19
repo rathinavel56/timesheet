@@ -15,4 +15,5 @@ export class User extends ServiceResponse {
     is_active: boolean;
     role: any;
     manager: any;
+    shore_type: Number;
 }
