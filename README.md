@@ -57,7 +57,7 @@ Before running the tests make sure you are serving the app via `ng serve`.
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
 
-##Useful Commands
+## Useful Commands
 docker run -it -d --name mongodb -p 127.0.0.1:27017:27017 mvertes/alpine-mongo
 sudo kill `sudo lsof -t -i:3001`
 sudo kill `sudo lsof -t -i:27017`
