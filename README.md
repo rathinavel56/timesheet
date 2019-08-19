@@ -58,24 +58,21 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 
 ## Useful Commands
-docker run -it -d --name mongodb -p 127.0.0.1:27017:27017 mvertes/alpine-mongo
-sudo kill `sudo lsof -t -i:3001`
-sudo kill `sudo lsof -t -i:27017`
-docker-compose build --no-cache
-docker-compose up
-docker stop 74d35f6b5e72
-docker rmi $(docker images -a -q)
-docker ps -a
-
-docker rm $(docker ps -a -f status=exited -q)
-
-sudo service mongod start
-sudo service mongod stop
-
-docker rmi $(docker volume -a -q)
-docker run -it -d --name mongodb --network docker_demo -p 27117:27117 -v mongodata:/data/db mvertes/alpine-mongo --port 27117
-
-npm install -g -f angular-cli
-netstat -a -n | find "27017"
-
-mongod --journal --storageEngine=mmapv1 --dbpath D:/rathinavel_workspace/db
+```bash
+$ docker run -it -d --name mongodb -p 127.0.0.1:27017:27017 mvertes/alpine-mongo
+$ sudo kill `sudo lsof -t -i:3001`
+$ sudo kill `sudo lsof -t -i:27017`
+$ docker-compose build --no-cache
+$ docker-compose up
+$ docker stop 74d35f6b5e72
+$ docker rmi $(docker images -a -q)
+$ docker ps -a
+$ docker rm $(docker ps -a -f status=exited -q)
+$ sudo service mongod start
+$ sudo service mongod stop
+$ docker rmi $(docker volume -a -q)
+$ docker run -it -d --name mongodb --network docker_demo -p 27117:27117 -v mongodata:/data/db mvertes/alpine-mongo --port 27117
+$ npm install -g -f angular-cli
+$ netstat -a -n | find "27017"
+$ mongod --journal --storageEngine=mmapv1 --dbpath D:/rathinavel_workspace/db
+```
