@@ -193,7 +193,7 @@ exports.create = function (req, res) {
                             var wbout = Buffer.from(XLSX.write(wb, wopts));
                             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                             res.setHeader('Content-Disposition', 'attachment; filename=TimeSheet.xlsx');
-                            res.send(wbout);
+                            res.end(wbout);
                         }
                     });
             } else {

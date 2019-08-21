@@ -31,10 +31,14 @@ export class LoginComponent implements OnInit {
 
     ngOnInit() {
         const isSessionExpired = sessionStorage.getItem('session_expired');
+        const isBackendFailure = sessionStorage.getItem('backend_failure');
         if (isSessionExpired !== undefined && isSessionExpired === 'true') {
             sessionStorage.removeItem('session_expired');
             this.toastMessage.error(null, 'Session Expired');
-        }
+        } else if (isBackendFailure !== undefined && isBackendFailure === 'true') {
+            sessionStorage.removeItem('backend_failure');
+            this.toastMessage.error(null, 'We are facing a backend problem, please try again after sometimes or if the issue exist kindly contact adminstrator');
+        }    
         this.loginForm = this.formBuilder.group({
             employee_id: ['', Validators.required],
             password: ['', [Validators.required, Validators.minLength(6)]]

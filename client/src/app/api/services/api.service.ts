@@ -78,12 +78,15 @@ export class ApiService {
      * Handles all the network errors from the Http methods
      */
     handleNetworkErrors(errObject: HttpErrorResponse): Observable<any> {
-        if (errObject.status === 401) {
+        if (errObject.status === 0) {
+            sessionStorage.removeItem('timeSheet');
+            sessionStorage.setItem('backend_failure', 'true');
+            window.location.href = "/login";
+        } else if (errObject.status === 401) {
             sessionStorage.removeItem('timeSheet');
             sessionStorage.setItem('session_expired', 'true');
             window.location.href = "/login";
-        }
-        else if (errObject.status === 500) {
+        } else if (errObject.status === 500) {
          alert(errObject.error.statusMessage);
         }
         return of(true);

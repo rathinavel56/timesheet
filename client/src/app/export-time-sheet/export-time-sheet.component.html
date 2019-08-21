@@ -1,58 +1,19 @@
 <div [@routerTransition]>
         <app-page-header [heading]="'Export Time Sheet'" [icon]="'fa-edit'"></app-page-header>
-        <form class="form-horizontal" [formGroup]="exportForm" (ngSubmit)="onSubmit()" >
-                <div class="row">
-                        <div class="col-sm-4">
-                                <div class="form-group">
-                                        <strong>Start:
-                                        </strong>
-                                        <div
-                                                class="input-group datepicker-input">
-                                                <input class="form-control"
-                                                formControlName="start"
-                                                        placeholder="yyyy-mm-dd"
-                                                        ngbDatepicker
-                                                        #d="ngbDatepicker"
-                                                         />
-                                                <button class="input-group-addon"
-                                                        (click)="d.toggle()"
-                                                        type="button">
-                                                        <span
-                                                                class="fa fa-calendar"></span>
-                                                </button>
-                                        </div>
-                                        <div *ngIf="submitted && exportForm.get('start').value.length === 0" class="invalid-feedback-show">
-                                                Required
-                                        </div>
-                                </div>
-                        </div>
-                        <div class="col-sm-4">
-                                <div class="form-group">
-                                        <strong>End:
-                                        </strong>
-                                        <div
-                                                class="input-group datepicker-input">
-                                                <input class="form-control"
-                                                        formControlName="end"
-                                                        placeholder="yyyy-mm-dd"
-                                                        ngbDatepicker
-                                                        #d="ngbDatepicker"
-                                                         />
-                                                <button class="input-group-addon"
-                                                        (click)="d.toggle()"
-                                                        type="button">
-                                                        <span
-                                                                class="fa fa-calendar"></span>
-                                                </button>
-                                        </div>
-                                        <div *ngIf="submitted && exportForm.get('end').value.length === 0" class="invalid-feedback-show">
-                                                Required
-                                        </div>
+        <div class="row">
+                <div class="col-sm-6">
+                        <div class="form-group">
+                                <strong>Choose Date:
+                                </strong>
+                                <ngb-datepicker (navigate)="dateNavigate($event)" 
+[showWeekdays]="false" class="datepicker-only-month-select"></ngb-datepicker>
+                                <div *ngIf="submitted && startMonth.length === 0 && startYear.length === 0" class="invalid-feedback-show">
+                                        Required
                                 </div>
                         </div>
                 </div>
-                <div class="row">
-                        &nbsp;&nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-        </form>
+        </div>
+        <div class="row">
+                &nbsp;&nbsp;&nbsp;&nbsp;<button type="button" (click)="onSubmit()" class="btn btn-primary">Submit</button>
+        </div>
 </div>

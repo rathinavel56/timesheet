@@ -36,3 +36,10 @@ input[type='number']::-webkit-outer-spin-button {
     overflow: auto;
 }
 
+.datepicker-only-month-select {
+    border: 0 !important;
+    width: 13rem;
+    .ngb-dp-months {
+      display: none !important;
+    }
+  }
