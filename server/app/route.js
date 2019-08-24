@@ -12,13 +12,43 @@ const Project = require('./controllers/Project');
 const ProjectInfra = require('./controllers/ProjectInfra');
 const DailyTimeSheet = require('./controllers/DailyTimeSheet');
 const ExportTimeSheet = require('./controllers/ExportTimeSheet');
-//------Common Url Start---//
-
-//Non Login Routes
+const path = require('path');
+const allowedExt = [
+	'.js',
+	'.ico',
+	'.css',
+	'.png',
+	'.jpg',
+	'.jpeg',
+	'.woff2',
+	'.woff',
+	'.ttf',
+	'.svg'
+];
 router
+	.use(express.static('./app/public'))
     .use(bodyParser.urlencoded({ extended: false }))
     .use(bodyParser.json())
     .use(cors())
+	.use(function (req, res, next) {
+		if (req.url.indexOf('api') === -1) {
+			const fileName = req.url.split('.').pop();
+			if (allowedExt.indexOf('.' + fileName) === 0) {
+			   res.sendFile(path.resolve('./app/public/' + req.url)); 	
+			} else {
+			   res.sendFile(path.resolve('./app/public/index.html'));	
+			}
+		} else {
+			res.header("Access-Control-Allow-Origin", "*");
+			res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+			res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+			res.header("Pragma", "no-cache");
+			res.header("Expires", 0);
+			next();
+		}
+    })
+	//------Common Url Start---//
+	//Non Login Routes
     .post('/api/v1/login', User.login)
     //Register
     .post('/api/v1/register', User.register)
