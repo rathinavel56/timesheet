@@ -74,4 +74,10 @@ export class LoginComponent implements OnInit {
                 });
         }, 100);
     }
+	
+	onKeydown(event) {
+	  if (event.key === "Enter") {
+		this.onSubmit();
+	  }
+	}
 }

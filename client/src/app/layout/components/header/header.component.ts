@@ -11,6 +11,7 @@ import { AppComponent } from '../../../app.component';
 export class HeaderComponent extends AppComponent implements OnInit {
     public pushRightClass: string;
     public sessionDetails: any;
+    public isAdmin: Boolean;
 
     constructor(private translate: TranslateService, public router: Router) {
 
@@ -25,6 +26,7 @@ export class HeaderComponent extends AppComponent implements OnInit {
             }
         });
         this.sessionDetails = this.getSessionDetail();
+        this.isAdmin = this.isAdminValidate();
     }
 
     ngOnInit() {

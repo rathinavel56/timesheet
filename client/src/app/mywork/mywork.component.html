@@ -80,7 +80,7 @@
                                         let j = index
                                     " [formGroupName]="j">
                                                                         <select class="form-control"
-                                                                                formControlName="bau">
+                                                                                formControlName="bau" (keydown)="onKeydown($event)">
                                                                                 <option *ngFor="let bau of baus"
                                                                                         [value]="bau.id">
                                                                                         {{ bau.name }}</option>
@@ -117,7 +117,7 @@
                                         let j = index
                                     " [formGroupName]="j">
                                                                         <select formControlName="ot_planned"
-                                                                                class="form-control">
+                                                                                class="form-control" (keydown)="onKeydown($event)">
                                                                                 <option *ngFor="let ot of otPlanned"
                                                                                         [value]="ot.id">
                                                                                         {{ ot.name }}</option>
@@ -138,7 +138,7 @@
                                                                                 formControlName="addtion_hours_planned"
                                                                                 [readonly]="
                                             day.get('ot_planned').value === 0
-                                        " />
+                                        " (keydown)="onKeydown($event)"/>
                                                                         <div *ngIf="
                                             timeSheetFormSubmitted &&
                                             day.get('ot_planned').value > 0 &&
@@ -176,7 +176,7 @@
                                                                                 formControlName="addtion_hours_desc_planned"
                                                                                 [readonly]="
                                             day.get('ot_planned').value === 0
-                                        " />
+                                        " (keydown)="onKeydown($event)"/>
                                                                         <div *ngIf="
                                             timeSheetFormSubmitted &&
                                             day.get('ot_planned').value > 0 &&
@@ -197,7 +197,7 @@
                                         let j = index
                                     " [formGroupName]="j">
                                                                         <select formControlName="ot_unplanned"
-                                                                                class="form-control">
+                                                                                class="form-control" (keydown)="onKeydown($event)">
                                                                                 <option *ngFor="let ot of otUnplanned"
                                                                                         [value]="ot.id">
                                                                                         {{ ot.name }}</option>
@@ -218,7 +218,7 @@
                                                                                 formControlName="addtion_hours_unplanned"
                                                                                 [readonly]="
                                             day.get('ot_unplanned').value === 0
-                                        " />
+                                        " (keydown)="onKeydown($event)"/>
                                                                         <div *ngIf="
                                             timeSheetFormSubmitted &&
                                             day.get('ot_unplanned').value > 0 &&
@@ -257,7 +257,7 @@
                                                                                 formControlName="addtion_hours_desc_unplanned"
                                                                                 [readonly]="
                                             day.get('ot_unplanned').value === 0
-                                        " />
+                                        " (keydown)="onKeydown($event)"/>
                                                                         <div *ngIf="
                                             timeSheetFormSubmitted &&
                                             day.get('ot_unplanned').value > 0 &&
@@ -274,7 +274,7 @@
                                         <br />
                                 </div>
                                 <p class="text-center">
-                                        <br /><button type="button" [disabled]="!submitTimeSheet"
+                                        <br /><button type="button" (keydown)="onKeydown($event)" [disabled]="!submitTimeSheet"
                                                 class="btn btn-primary" (click)="onSubmit()">
                                                 Submit
                                         </button>

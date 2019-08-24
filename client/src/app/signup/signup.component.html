@@ -8,7 +8,7 @@
                     <div class="form-group">
                         <input type="number" min="1" class="form-control input-underline input-lg"
                             formControlName="employee_id" placeholder="{{ 'Enter Your Emp Id' | translate }}"
-                            [ngClass]="{ 'is-invalid': submitted && f.employee_id.errors }">
+                            [ngClass]="{ 'is-invalid': submitted && f.employee_id.errors }" (keydown)="onKeydown($event)" tabindex="1">
                         <div *ngIf="submitted && !!f.employee_id?.errors" class="invalid-feedback-show">
                             <div *ngIf="!!f.employee_id?.errors.required">{{ 'Emp Id is required' | translate }}</div>
                         </div>
@@ -17,7 +17,7 @@
                     <div class="form-group">
                         <input type="text" class="form-control input-underline input-lg" formControlName="name"
                             placeholder="{{ 'Enter Your Emp Name' | translate }}"
-                            [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                            [ngClass]="{ 'is-invalid': submitted && f.name.errors }" (keydown)="onKeydown($event)" tabindex="2">
                         <div *ngIf="submitted && !!f.name?.errors" class="invalid-feedback-show">
                             <div *ngIf="!!f.name?.errors.required">{{ 'Emp name is required' | translate }}</div>
                         </div>
@@ -25,7 +25,7 @@
                     <div class="form-group">
                         <select type="text" formControlName="shore_type"
                             class="form-control input-underline input-lg input-select"
-                            [ngClass]="{ 'is-invalid': submitted && f.shore_type.errors }">
+                            [ngClass]="{ 'is-invalid': submitted && f.shore_type.errors }" (keydown)="onKeydown($event)" tabindex="3">
                             <option value="">{{ 'Select the shore type' | translate }}</option>
                             <option *ngFor="let shoreType of shoreTypes"
                                 [value]="shoreType.id">{{shoreType.name}}</option>
@@ -38,7 +38,7 @@
                     <div class="form-group">
                         <select type="text" formControlName="security_question_id"
                             class="form-control input-underline input-lg input-select"
-                            [ngClass]="{ 'is-invalid': submitted && f.security_question_id.errors }">
+                            [ngClass]="{ 'is-invalid': submitted && f.security_question_id.errors }" (keydown)="onKeydown($event)" tabindex="4">
                             <option value="">{{ 'Select the Security Questions' | translate }}</option>
                             <option *ngFor="let securityQuestion of securityQuestions.data"
                                 [value]="securityQuestion.id">{{securityQuestion.name}}</option>
@@ -52,7 +52,7 @@
                         <input type="text" autocomplete="false" class="form-control input-underline input-lg"
                             formControlName="security_question_answer"
                             placeholder="{{ 'Security Question Answer' | translate }}"
-                            [ngClass]="{ 'is-invalid': submitted && f.security_question_answer.errors }">
+                            [ngClass]="{ 'is-invalid': submitted && f.security_question_answer.errors }" (keydown)="onKeydown($event)" tabindex="5">
                         <div *ngIf="submitted && !!f.security_question_answer?.errors" class="invalid-feedback-show">
                             <div *ngIf="!!f.security_question_answer.errors?.required">
                                 {{ 'Security questions answer is required' | translate }}</div>
@@ -61,7 +61,7 @@
                     <div class="form-group">
                         <select type="text" formControlName="manager_id"
                             class="form-control input-underline input-lg input-select"
-                            [ngClass]="{ 'is-invalid': submitted && f.manager_id.errors }">
+                            [ngClass]="{ 'is-invalid': submitted && f.manager_id.errors }" (keydown)="onKeydown($event)" tabindex="6">
                             <option value="" selected>Select Manager</option>
                             <option *ngFor="let manager of managers" [value]="manager.id">{{ manager.name }}</option>
                         </select>
@@ -74,7 +74,7 @@
                         <select type="text" formControlName="project_id"
                             class="form-control input-underline input-lg input-select"
                             [ngClass]="{ 'is-invalid': submitted && f.project_id.errors }"
-                            (change)="getInfraTowers($event.target.value)">
+                            (change)="getInfraTowers($event.target.value)" (keydown)="onKeydown($event)" tabindex="7">
                             <option value="" selected>Select Project</option>
                             <option *ngFor="let project of projects" [value]="project._id">{{project.name}}</option>
                         </select>
@@ -85,7 +85,7 @@
                     </div>
                     <div class="form-group" *ngIf="infraTowers.length > 0" >
                         <select type="text" formControlName="infra_tower_id"
-                            class="form-control input-underline input-lg input-select" [ngClass]="{ 'is-invalid': submitted && (infraTowers.length > 0 && registerForm.get('infra_tower_id').value === '') }">
+                            class="form-control input-underline input-lg input-select" [ngClass]="{ 'is-invalid': submitted && (infraTowers.length > 0 && registerForm.get('infra_tower_id').value === '') }" (keydown)="onKeydown($event)" tabindex="8">
                             <option value="" selected>Select Infra Tower</option>
                             <option *ngFor="let infraTower of infraTowers" [value]="infraTower._id">{{infraTower.name}}
                             </option>
@@ -97,7 +97,7 @@
                     <div class="form-group">
                         <input type="password" autocomplete="false" class="form-control input-underline input-lg" formControlName="password"
                             placeholder="{{ 'Password' | translate }}"
-                            [ngClass]="{ 'is-invalid': submitted && f.password.errors }">
+                            [ngClass]="{ 'is-invalid': submitted && f.password.errors }" (keydown)="onKeydown($event)" tabindex="9">
                         <div *ngIf="submitted && !!f.password?.errors" class="invalid-feedback-show">
                             <div *ngIf="!!f.password?.errors.required">{{ 'Password is required' | translate }}</div>
                         </div>
@@ -108,7 +108,7 @@
                     </div>
                     <div class="form-group">
                         <input type="password" class="form-control input-underline input-lg"
-                            formControlName="confirm_password" placeholder="{{ 'Confirm Password' | translate }}"  [ngClass]="{ 'is-invalid': (submitted && (registerForm.get('confirm_password').value.length === 0 || registerForm.get('password').value !== registerForm.get('confirm_password').value)) }">
+                            formControlName="confirm_password" placeholder="{{ 'Confirm Password' | translate }}"  [ngClass]="{ 'is-invalid': (submitted && (registerForm.get('confirm_password').value.length === 0 || registerForm.get('password').value !== registerForm.get('confirm_password').value)) }" (keydown)="onKeydown($event)" tabindex="10">
                         <div *ngIf="submitted && registerForm.get('confirm_password').value.length >= 6 && (registerForm.get('password').value !== registerForm.get('confirm_password').value)"
                             class="invalid-feedback-show">
                             Password and Confirm Password should match.
@@ -123,8 +123,8 @@
                         </div>
                     </div>
                 </div>
-                <a class="btn rounded-btn" (click)="onSubmit()">{{ 'Register' | translate }}</a>&nbsp;
-                <a class="btn rounded-btn" [routerLink]="['/login']">{{ 'Log in' | translate }}</a>
+                <a class="btn rounded-btn" (keydown)="onKeydown($event)" tabindex="11" (click)="onSubmit()">{{ 'Register' | translate }}</a>&nbsp;
+                <a class="btn rounded-btn" [routerLink]="['/login']" tabindex="12">{{ 'Log in' | translate }}</a>
             </form>
         </div>
     </div>

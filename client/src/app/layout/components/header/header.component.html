@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg fixed-top">
-    <a class="navbar-brand" href="#">{{ 'TimeSheet' | translate }}</a>
+    <a class="navbar-brand" href="javascript:void(0);">{{ 'TimeSheet' | translate }}</a>
     <button class="navbar-toggler" type="button" (click)="toggleSidebar()">
         <i class="fa fa-bars text-muted" aria-hidden="true"></i>
     </button>
@@ -10,7 +10,8 @@
                     <i class="fa fa-user"></i> {{ sessionDetails.user.name }} <b class="caret"></b>
                 </a>
                 <div class="dropdown-menu-right" ngbDropdownMenu>
-                    <a class="dropdown-item" href="javascript:void(0)"> <i class="fa fa-fw fa-gear"></i> {{ 'Settings' | translate }} </a>
+                    <a *ngIf="!isAdmin" class="dropdown-item" href="javascript:void(0)" routerLink="/settings"> <i class="fa fa-fw fa-gear"></i> {{ 'Settings' | translate }} </a>
+                    <a  routerLink="/change_password" class="dropdown-item" href="javascript:void(0)"> <i class="fa fa-fw fa-gear"></i> {{ 'Change Password' | translate }}</a>
                     <a class="dropdown-item" [routerLink]="['/login']" (click)="onLoggedout()">
                         <i class="fa fa-fw fa-power-off"></i> {{ 'Log Out' | translate }}
                     </a>

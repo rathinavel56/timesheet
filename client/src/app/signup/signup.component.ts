@@ -152,4 +152,10 @@ export class SignupComponent implements OnInit {
         // Object.keys(this.f).forEach((key) => (key !== 'security_question_id') ? this.f[key].setValue(this.registerForm.value.key) : '');
         // Object.keys(this.f).forEach((key) => console.log(this.registerForm.get(key).value));
     }
+	
+	onKeydown(event) {
+	  if (event.key === "Enter") {
+		this.onSubmit();
+	  }
+	}
 }

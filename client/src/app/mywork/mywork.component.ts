@@ -254,5 +254,11 @@ export class MyworkComponent implements OnInit {
     }
     this.getTimeSheet(this.startDate, this.endDate);
   }
+  
+	onKeydown(event) {
+	  if (event.key === "Enter") {
+		this.onSubmit();
+	  }
+	}
 
 }

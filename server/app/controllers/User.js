@@ -128,7 +128,7 @@ exports.register = function (req, res) {
                     };
                     res.json({
                         status: config.statusMessage.success,
-                        statusMessage: config.statusMessage.user.loginSuccess,
+                        statusMessage: config.statusMessage.user.registerSuccess,
                         data: {
                             user: userData,
                             access_token: token

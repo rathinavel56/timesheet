@@ -16,8 +16,8 @@
         "internalServerError": "Please retry or contact adminstrator with Id : ",
         "user": {
             "success": "User fetched successfully",
-            "created": "User Created Successfully",
-            "updated": "User Updated Successfully",
+            "created": "User created successfully",
+            "updated": "User updated successfully",
             "exist": "Employee Number already exist, please login or try forgot password",
             "notExist": "Login Failed, Employee Number doesn't exist",
             "employeeEmpty": "Login Failed, employee number is empty",
@@ -25,24 +25,25 @@
             "requestEmpty": "User Can't be created due to empty object",
             "loginSuccess": "Login Success",
             "loginFailed": "Employee Number or password is incorrect",
-            "isActiveLoginFailed": "Contact your adminstrator to activate your account"
+            "isActiveLoginFailed": "Contact your adminstrator to activate your account",
+			"registerSuccess": "You have registered successfully"
         },
         "infraTower": {
             "success": "Infra Tower fetched successfully",
-            "created": "Infra Tower Created Successfully",
-            "updated": "Infra Tower Updated Successfully",
+            "created": "Infra Tower created successfully",
+            "updated": "Infra Tower updated successfully",
             "exist": "Infra Tower already exist"
         },
         "project": {
             "success": "Projects fetched successfully",
-            "created": "Project Created Successfully",
-            "updated": "Project Updated Successfully",
+            "created": "Project created successfully",
+            "updated": "Project updated successfully",
             "exist": "Project already exist"
         },
         "project_infra": {
             "success": "Project Infra fetched successfully",
-            "created": "Project Infra Created Successfully",
-            "updated": "Project Infra Updated Successfully",
+            "created": "Project Infra created successfully",
+            "updated": "Project Infra updated successfully",
             "exist": "Project Infra already exist"
         },
         "security_question": {

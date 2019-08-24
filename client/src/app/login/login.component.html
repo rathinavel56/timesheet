@@ -6,13 +6,13 @@
             <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
                 <div class="form-content">
                     <div class="form-group">
-                        <input type="number" min="0" formControlName="employee_id" class="form-control input-underline input-lg" placeholder="{{ 'Employee Id' | translate }}" [ngClass]="{ 'is-invalid': submitted && (loginForm.get('employee_id').value.length === 0) }">
+                        <input type="number" min="0" formControlName="employee_id" (keydown)="onKeydown($event)" class="form-control input-underline input-lg" placeholder="{{ 'Employee Id' | translate }}" [ngClass]="{ 'is-invalid': submitted && (loginForm.get('employee_id').value.length === 0) }" tabindex="1">
                         <div *ngIf="submitted && (loginForm.get('employee_id').value.length === 0)" class="invalid-feedback-show">
                             {{ 'Employee Id is required' | translate }}</div>
                     </div>
 
                     <div class="form-group">
-                        <input type="password" formControlName="password" class="form-control input-underline input-lg" placeholder="{{ 'Password' | translate }}" [ngClass]="{ 'is-invalid': submitted && (loginForm.get('password').value.length === 0 || loginForm.get('password').value.length < 6) }">
+                        <input type="password" (keydown)="onKeydown($event)" formControlName="password" class="form-control input-underline input-lg" placeholder="{{ 'Password' | translate }}" [ngClass]="{ 'is-invalid': submitted && (loginForm.get('password').value.length === 0 || loginForm.get('password').value.length < 6) }" tabindex="2">
                         <div *ngIf="submitted && (loginForm.get('password').value.length === 0)" class="invalid-feedback-show">
                             {{ 'Password is required' | translate }}</div>
                         <div *ngIf="submitted && (loginForm.get('password').value.length !== 0 && loginForm.get('password').value.length < 6)"
@@ -21,10 +21,10 @@
                         </div>
                     </div>
                 </div>
-                <a class="btn rounded-btn" (click)="onSubmit()">{{ 'Log in' | translate }}</a>
+                <a class="btn rounded-btn" (keydown)="onKeydown($event)" (click)="onSubmit()" tabindex="3">{{ 'Log in' | translate }}</a>
                 &nbsp;
-                <a class="btn rounded-btn" [routerLink]="['/signup']">{{ 'Register' | translate }}</a><br><br>
-                <a class="btn rounded-btn" [routerLink]="['/forgot_password']">{{ 'Forgot Password' | translate }}</a>
+                <a class="btn rounded-btn" [routerLink]="['/signup']" tabindex="4">{{ 'Register' | translate }}</a><br><br>
+                <a class="btn rounded-btn" [routerLink]="['/forgot_password']" tabindex="5">{{ 'Forgot Password' | translate }}</a>
             </form>
         </div>
     </div>
