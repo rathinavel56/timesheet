@@ -319,7 +319,10 @@ exports.findById = function (req, res) {
                 .findOne({
                     _id: { $eq: req.decoded.id }
                 })
-                .select('name role_id manager_id project_id infra_tower_id shore_type is_active')
+                .select('_id name role_id manager_id project_id infra_tower_id shore_type is_active')
+                .populate('manager', '_id name')
+                .populate('project', '_id name')
+                .populate('infra', '_id name')
                 .exec(function (err, user) {
                     if (err) {
                         res.status(config.httpCode.internalServerError).json({

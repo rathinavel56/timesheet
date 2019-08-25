@@ -8,6 +8,7 @@ import { TimeSheetService } from '../api/services/time-sheet.service';
 import { ToastMessage } from '../utils/toast-message';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { UserService } from '../api/services/user.service';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
   ],
   providers: [
     ToastMessage,
-    TimeSheetService
+    TimeSheetService,
+    UserService
   ]
 })
 export class MyworkModule { }

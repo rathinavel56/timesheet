@@ -22,14 +22,14 @@ export class AppComponent implements OnInit {
                 '/signup',
                 '/forgot_password'
             ];
-            if (this.session.user.role === 'Admin') {
-                if (nonLoginUrl.indexOf(this.windowEvent.location.pathname) > -1) {
+            if (nonLoginUrl.indexOf(this.windowEvent.location.pathname) > -1 || this.windowEvent.location.pathname === '/') {
+                if (this.session.user.role === 'Admin') {
                     this.router.navigate(['/users']);
-                }
-            } else {
-                if (nonLoginUrl.indexOf(this.windowEvent.location.pathname) > -1) {
+                } else {
                     this.router.navigate(['/mywork']);
                 }
+            } else {
+                
             }
         } else {
             this.router.navigate(['/login']);

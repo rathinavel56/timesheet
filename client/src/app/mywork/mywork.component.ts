@@ -5,7 +5,9 @@ import { ToastMessage } from '../utils/toast-message';
 import { AppConst } from '../utils/app-const';
 import { TimeSheet } from '../api/models/time-sheet';
 import { TimeSheetService } from '../api/services/time-sheet.service';
+import { UserService } from '../api/services/user.service';
 import { Router } from '@angular/router';
+import { User } from '../api/models/user';
 
 @Component({
   selector: 'app-myworks',
@@ -35,10 +37,13 @@ export class MyworkComponent implements OnInit {
   public timeSheetFormSubmitted: Boolean = false;
   public dailyTimeSheet: Boolean = false;
   public defaultTimeSheet: Boolean = false;
+  public headerString: String = 'Enter Your Time Sheet Detail';
+  public user: User;
 
   constructor(public router: Router,
     private formBuilder: FormBuilder,
     private toastMessage: ToastMessage,
+    private userService: UserService,
     private timeSheetService: TimeSheetService) {
     const currentDate = new Date();
     this.minDate = { year: currentDate.getFullYear() - 1, month: 12, day: 1 };
@@ -52,7 +57,9 @@ export class MyworkComponent implements OnInit {
     if (this.router.url === '/mywork') {
       this.dailyTimeSheet = true;
       this.currentDate = new Date(this.maxDate.year, (this.maxDate.month - 1), this.maxDate.day);
+      this.getUserById();
     } else {
+      this.headerString = 'Enter Your Default Time Sheet Detail';
       this.currentDate = new Date(1920, 1, 3);
     }
     this.getStartEnd(this.currentDate);
@@ -261,4 +268,12 @@ export class MyworkComponent implements OnInit {
 	  }
 	}
 
+  getUserById() {
+    this.userService.findById()
+      .subscribe(data => {
+        this.serviceResponse = data;
+        this.user = this.serviceResponse.data;
+      });
+  }
+  
 }
