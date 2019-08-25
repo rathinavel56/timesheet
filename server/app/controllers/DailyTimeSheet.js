@@ -25,13 +25,13 @@ exports.create = function (req, res) {
                                 if (childElement.bau !== 0) {
                                     var billed_hour = 0;
                                     var non_billed_hour = 0;
-                                    if (childElement.bau === 1 || childElement.bau === 2)
+                                    if (childElement.bau.toString() === '1' || childElement.bau.toString() === '2')
                                     {
-                                        billed_hour = (childElement.bau === 1) ? 8 : 4;
+                                        billed_hour = (childElement.bau.toString() === '1') ? 8 : 4;
                                     }
-                                    if (childElement.bau === 3 || childElement.bau === 4)
+                                    if (childElement.bau.toString() === '3' || childElement.bau.toString() === '4')
                                     {
-                                        non_billed_hour = (childElement.bau === 3) ? 8 : 4;
+                                        non_billed_hour = (childElement.bau.toString() === '3') ? 8 : 4;
                                     }
                                     const insertRecord = {
                                         user_id: userId,
