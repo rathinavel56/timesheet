@@ -40,9 +40,9 @@
                                                         </td>
                                                         <td>
                                                                 <table class="table100">
-                                                                        <tr><td><label>Manager</label></td><td>{{ (user.manager.length > 0) ? user.manager[0].name: 'N/A'}}</td></tr>
-                                                                        <tr><td><label>Project</label></td><td>{{ (user.project.length > 0) ? user.project[0].name: 'N/A'}}</td></tr>
-                                                                        <tr><td><label>Infra Tower</label></td><td>{{ (user.infra.length > 0) ? user.infra[0].name: 'N/A'}}</td></tr>
+                                                                        <tr><td><label>Manager</label></td><td>{{ managerName }}</td></tr>
+                                                                        <tr><td><label>Project</label></td><td>{{ projectName }}</td></tr>
+                                                                        <tr><td><label>Infra Tower</label></td><td>{{ infraName }}</td></tr>
                                                                 </table>        
                                                         </td>
                                                 </tr>
@@ -147,7 +147,7 @@
                                         " class="invalid-feedback-show">
                                                                                 Required
                                                                         </div>
-                                                                        <div *ngIf="
+                                                                        <!-- <div *ngIf="
                                             timeSheetFormSubmitted &&
                                             day.get('ot_planned').value === 1 &&
                                             day.get('addtion_hours_planned')
@@ -161,7 +161,7 @@
                                                 24
                                         " class="invalid-feedback-show">
                                                                                 Entered Hour is greater than 24 Hours
-                                                                        </div>
+                                                                        </div> -->
                                                                 </th>
                                                         </tr>
                                                         <tr>
@@ -227,7 +227,7 @@
                                         " class="invalid-feedback-show">
                                                                                 Required
                                                                         </div>
-                                                                        <div *ngIf="
+                                                                        <!-- <div *ngIf="
                                             timeSheetFormSubmitted &&
                                             day.get('ot_unplanned').value ===
                                                 1 &&
@@ -242,7 +242,7 @@
                                                 24
                                         " class="invalid-feedback-show">
                                                                                 Entered Hour is greater than 24 Hours
-                                                                        </div>
+                                                                        </div> -->
                                                                 </th>
                                                         </tr>
                                                         <tr>
@@ -298,6 +298,7 @@
                                 <th>Ot Planned Description</th>
                                 <th>Ot Unplanned Hours</th>
                                 <th>Ot Unplanned Description</th>
+                                <th>Leave Type</th>
                         </tr>
                 </thead>
                 <tbody>
@@ -317,22 +318,23 @@
                                 <th>{{ (timeSheet.manager.length > 0) ? timeSheet.manager[0].name: 'N/A'}}</th>
                                 <th>{{ (timeSheet.project.length > 0) ? timeSheet.project[0].name: 'N/A'}}</th>
                                 <th>{{ (timeSheet.infra.length > 0) ? timeSheet.infra[0].name: 'N/A'}}</th>
-                                <th>{{ timeSheet.billed_hour }}</th>
-                                <th>{{ timeSheet.non_billed_hour }}</th>
-                                <th>{{ timeSheet.ot_planned }}</th>
+                                <th>{{ (timeSheet.billed_hour > 0) ? timeSheet.billed_hour: 'N/A' }}</th>
+                                <th>{{ (timeSheet.non_billed_hour > 0) ? timeSheet.non_billed_hour: 'N/A' }}</th>
+                                <th>{{ (timeSheet.ot_planned > 0) ? timeSheet.ot_planned: 'N/A' }}</th>
                                 <th>{{ (timeSheet.addtion_hours_desc_planned !== '') ? timeSheet.addtion_hours_desc_planned: 'N/A' }}</th>
-                                <th>{{ timeSheet.ot_unplanned }}</th>
+                                <th>{{ (timeSheet.ot_unplanned > 0) ? timeSheet.ot_unplanned: 'N/A' }}</th>
                                 <th>{{ (timeSheet.addtion_hours_desc_unplanned !== '') ? timeSheet.addtion_hours_desc_unplanned: 'N/A' }}</th>
+                                <th>{{ (timeSheet.bau > 4) ? getBau(timeSheet.bau): 'N/A' }}</th>
                         </tr>
                         <tr *ngIf="!timeSheets.length">
-                                <td colspan="12">
+                                <td colspan="13">
                                         No Records found.
                                 </td>
                         </tr>
                 </tbody>
                 <tfoot *ngIf="totalRecords > itemPerPageIndex">
                         <tr>
-                                <td colspan="12">
+                                <td colspan="13">
                                         <pagination-controls id="paginationControlsId"
                                                 (pageChange)="pageChanged($event)" maxSize="9" directionLinks="true"
                                                 autoHide="true" responsive="true" previousLabel="Previous"

@@ -16,4 +16,6 @@ export class User extends ServiceResponse {
     role: any;
     manager: any;
     shore_type: Number;
+    project: any;
+    infra: any;
 }

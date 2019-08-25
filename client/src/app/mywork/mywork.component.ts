@@ -39,6 +39,9 @@ export class MyworkComponent implements OnInit {
   public defaultTimeSheet: Boolean = false;
   public headerString: String = 'Enter Your Time Sheet Detail';
   public user: User;
+  public managerName: String = 'N/A';
+  public projectName: String = 'N/A';
+  public infraName: String = 'N/A';
 
   constructor(public router: Router,
     private formBuilder: FormBuilder,
@@ -160,6 +163,11 @@ export class MyworkComponent implements OnInit {
     return findElement.value;
   }
 
+  getBau(bau: Number) {
+    const findElement = AppConst.BAU.find(x => x.id.toString() === bau.toString());
+    return findElement.name;
+  }
+
   pageChanged(pageNo: Number) {
     this.currentPageIndex = pageNo;
     this.getTimeSheet('', '');
@@ -273,6 +281,9 @@ export class MyworkComponent implements OnInit {
       .subscribe(data => {
         this.serviceResponse = data;
         this.user = this.serviceResponse.data;
+        this.managerName = this.user.manager[0].name;
+        this.projectName = this.user.project[0].name;
+        this.infraName = (this.user.infra.length > 0) ? this.user.infra[0].name: 'N/A';
       });
   }
   
