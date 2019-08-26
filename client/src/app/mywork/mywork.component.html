@@ -312,7 +312,7 @@
                                   totalItems: totalRecords
                               }
                 ">
-                                <th>{{ timeSheet.date | date: "dd/MM/yyyy" }}</th>
+                                <th>{{ dateFormat(timeSheet.date) | date: "dd/MM/yyyy" }}</th>
                                 <th>{{ (timeSheet.user.length > 0) ? timeSheet.user[0].name: 'N/A'}}</th>
                                 <th>{{ (timeSheet.shore_type === 0) ? 'OffShore': 'Onshore' }}</th>
                                 <th>{{ (timeSheet.manager.length > 0) ? timeSheet.manager[0].name: 'N/A'}}</th>

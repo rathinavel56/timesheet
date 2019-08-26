@@ -270,9 +270,9 @@ export class MyworkComponent implements OnInit {
     this.getTimeSheet(this.startDate, this.endDate);
   }
   
-	onKeydown(event) {
+	onKeydown(event: any) {
 	  if (event.key === "Enter") {
-		this.onSubmit();
+		  this.onSubmit();
 	  }
 	}
 
@@ -286,5 +286,9 @@ export class MyworkComponent implements OnInit {
         this.infraName = (this.user.infra.length > 0) ? this.user.infra[0].name: 'N/A';
       });
   }
+
+  dateFormat(date: String) {
+	  return date.split('T')[0];
+	}
   
 }

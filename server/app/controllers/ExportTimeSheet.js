@@ -190,6 +190,7 @@ exports.create = function (req, res) {
                             var wb = XLSX.utils.book_new();
                             var wopts = { bookType: 'xlsx', type: 'buffer' };
                             XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+                            XLSX.writeFile(wb, "TimeSheet.xlsx");
                             var wbout = Buffer.from(XLSX.write(wb, wopts));
                             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                             res.setHeader('Content-Disposition', 'attachment; filename=TimeSheet.xlsx');
