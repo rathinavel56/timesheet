@@ -4,8 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TimeSheetService } from '../api/services/time-sheet.service';
 import { ToastMessage } from '../utils/toast-message';
 import { AppConst } from '../utils/app-const';
-import { saveAs } from 'file-saver';
-import { NgbDatepickerNavigateEvent } from '@ng-bootstrap/ng-bootstrap';  
+import { NgbDatepickerNavigateEvent } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-export-time-sheet',
@@ -20,6 +19,7 @@ export class ExportTimeSheetComponent {
   public windowEvent: any = window;
   public startMonth: any;
   public startYear: any;
+  public monthNames = AppConst.MONTH_NAMES;
 
   constructor(private formBuilder: FormBuilder,
     private toastMessage: ToastMessage,
@@ -40,22 +40,28 @@ export class ExportTimeSheetComponent {
       const lastDay = new Date(this.startYear, this.startMonth + 1, 0);
       let day = ((firstDay.getDate() < 10) ? '0' + firstDay.getDate() : firstDay.getDate());
       let month = firstDay.getMonth();
+	  let monthName = this.monthNames[month];
       let formattedStartDated = firstDay.getFullYear() + '-' + ((month < 10) ? '0' + month : month) + '-' + day;
       day = ((lastDay.getDate() < 10) ? '0' + lastDay.getDate() : lastDay.getDate());
       month = lastDay.getMonth();
       let formattedEndDated = lastDay.getFullYear() + '-' + ((month < 10) ? '0' + month : month) + '-' + day;
       const exportDate = {
         start: formattedStartDated,
-        end: formattedEndDated
+        end: formattedEndDated,
+		month: monthName,
+		year: this.startYear
       };
       this.timeSheetService.exportRecord(exportDate)
           .subscribe(response => {
               this.submitted = false;
               this.serviceResponse = response;
-              if (this.serviceResponse.status !== undefined && this.serviceResponse.status !== AppConst.SERVICE_STATUS.SUCCESS) {
+              if (this.serviceResponse !== null && this.serviceResponse.status !== undefined && this.serviceResponse.status !== AppConst.SERVICE_STATUS.SUCCESS) {
                 this.toastMessage.error(null, this.serviceResponse.statusMessage);
               } else {
-                saveAs(new Blob([this.serviceResponse],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}), "TimeSheet.xlsx");
+                let anchor;
+                anchor = document.createElement('a');
+                anchor.href = this.windowEvent.location.origin + "/TimeSheet_" + monthName + "_" + this.startYear + ".xlsx";
+                anchor.click();
               }
           });
     }, 100);

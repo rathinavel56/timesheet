@@ -3,6 +3,8 @@ const User = require('../models/User');
 const config = require('../config');
 const XLSX = require('xlsx');
 const mongoose = require('mongoose');
+const path = require('path');
+const fs = require('fs');
 exports.create = function (req, res) {
     try {
         var startDate = new Date(req.body.start + 'T00:00:00.000+00:00');
@@ -172,7 +174,7 @@ exports.create = function (req, res) {
                                 XLSX.utils.sheet_add_json(ws, [{
                                     A: { f: 'SUM((COUNTIF(H' + i + ':' + convertToNumberToExcel + i +',"8")*8)+(COUNTIF(H' + i + ':' + convertToNumberToExcel + i +',"4"))*4)'},
                                     B: { f: 'SUM((COUNTIF(H' + i + ':' + convertToNumberToExcel + i +',"8N")*8)+(COUNTIF(H' + i + ':' + convertToNumberToExcel + i +',"4N"))*4)'},
-                                    C: { f: 'SUM(H' + i + ':' + convertToNumberToExcel + i + ')'},
+                                    C: { f: 'SUM((COUNTIF(H' + i + ':' + convertToNumberToExcel + i +',"8")*8)+(COUNTIF(H' + i + ':' + convertToNumberToExcel + i +',"4"))*4)/8'},
                                     D: { f: 'COUNTIF(H' + i + ':' + convertToNumberToExcel + i + ',"EL")'},
                                     E: { f: 'COUNTIF(H' + i + ':' + convertToNumberToExcel + i + ',"PL")'},
                                     F: { f: 'COUNTIF(H' + i + ':' + convertToNumberToExcel + i + ',"SL")'},
@@ -189,12 +191,15 @@ exports.create = function (req, res) {
                             }
                             var wb = XLSX.utils.book_new();
                             var wopts = { bookType: 'xlsx', type: 'buffer' };
-                            XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-                            XLSX.writeFile(wb, "TimeSheet.xlsx");
-                            var wbout = Buffer.from(XLSX.write(wb, wopts));
-                            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                            res.setHeader('Content-Disposition', 'attachment; filename=TimeSheet.xlsx');
-                            res.end(wbout);
+                            XLSX.utils.book_append_sheet(wb, ws, req.body.month);
+							var filePath = path.resolve('./app/public/' + "TimeSheet_" + req.body.month + "_" + req.body.year + ".xlsx")
+                            XLSX.writeFile(wb, filePath);
+							setTimeout(function() {
+								if (fs.existsSync(filePath)) {
+									fs.unlinkSync(filePath);
+								}
+							}, 50000);
+                            res.end();
                         }
                     });
             } else {

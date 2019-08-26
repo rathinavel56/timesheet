@@ -23,7 +23,8 @@ const allowedExt = [
 	'.woff2',
 	'.woff',
 	'.ttf',
-	'.svg'
+	'.svg',
+	'.xlsx'
 ];
 router
 	.use(express.static('./app/public'))
