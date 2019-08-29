@@ -103,13 +103,14 @@ exports.create = function (req, res) {
                                     origin: staticColumn + '3'
                                 });
                             users.forEach(function (value) {
+console.log('value', value);
                                 XLSX.utils.sheet_add_json(ws, [{
                                     A: value.employee_id,
-                                    B: value.name,
+                                    B: value.name.toString(),
                                     C: (value.shore_type === 0) ? 'OFF' : 'ON',
                                     D: '100%',
-                                    E: value.manager[0].name,
-                                    F: value.infra[0].name
+                                    E: (value.manager) ? value.manager[0].name.toString(): 'Admin',
+                                    F: (value.infra) ? value.infra[0].name.toString(): ''
                                 }], {
                                         skipHeader: true,
                                         origin: "A" + originCell

@@ -22,7 +22,7 @@ exports.login = function (req, res) {
                                 error: err
                             });
                         } else {
-                            if (!userInfo.is_active)
+                            if (userInfo && !userInfo.is_active)
                             {
                                 res.json({
                                     status: config.statusMessage.failed,
