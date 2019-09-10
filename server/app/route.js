@@ -27,7 +27,7 @@ const allowedExt = [
 	'.xlsx'
 ];
 router
-	.use(express.static('./app/public'))
+    .use(express.static('./app/public'))
     .use(bodyParser.urlencoded({ extended: false }))
     .use(bodyParser.json())
     .use(cors())
