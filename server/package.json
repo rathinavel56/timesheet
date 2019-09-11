@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start-dev": "node --max-old-space-size=2048 ./app/server.js",
-    "start": "node ./app/server.js"
+    "start": "node ./app/server.js",
+    "start_linux": "mongod --dbpath /var/www/html/workspace/timesheet/mongodb-data/ && node ./app/server.js"
   },
   "keywords": [],
   "author": "",

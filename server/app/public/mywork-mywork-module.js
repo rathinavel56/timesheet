@@ -299,10 +299,15 @@ var MyworkComponent = /** @class */ (function () {
                 }));
             }
             currentDate.setDate(currentDate.getDate() + 1);
+            if (currentDate > new Date()) {
+                return "break";
+            }
         };
         var this_1 = this;
         for (var i = 0; i < 7; i++) {
-            _loop_1(i);
+            var state_1 = _loop_1(i);
+            if (state_1 === "break")
+                break;
         }
         this.initForm();
         var control = this.timeSheetForm.controls.timesheets;

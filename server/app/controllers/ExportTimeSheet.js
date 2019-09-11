@@ -102,15 +102,14 @@ exports.create = function (req, res) {
                                     skipHeader: true,
                                     origin: staticColumn + '3'
                                 });
-                            users.forEach(function (value) {
-console.log('value', value);
+                            users.forEach(function (elementSingle) {
                                 XLSX.utils.sheet_add_json(ws, [{
-                                    A: value.employee_id,
-                                    B: value.name.toString(),
-                                    C: (value.shore_type === 0) ? 'OFF' : 'ON',
+                                    A: elementSingle.employee_id,
+                                    B: elementSingle.name,
+                                    C: (elementSingle.shore_type === 0) ? 'OFF' : 'ON',
                                     D: '100%',
-                                    E: (value.manager) ? value.manager[0].name.toString(): 'Admin',
-                                    F: (value.infra) ? value.infra[0].name.toString(): ''
+                                    E: (elementSingle.manager) ? elementSingle.manager[0].name: 'Admin',
+                                    F: (elementSingle.infra.length > 0) ? elementSingle.infra[0].name: ''
                                 }], {
                                         skipHeader: true,
                                         origin: "A" + originCell
@@ -136,7 +135,7 @@ console.log('value', value);
                                         origin: "G" + (originCell + 2)
                                     });    
                                 dailyTimeSheet.filter(function (el) {
-                                    if (value._id.toString() === el.user_id.toString()) {
+                                    if (elementSingle._id.toString() === el.user_id.toString()) {
                                         var cellId = dateArray.filter(function (value) {
                                             return (el.date.getDate() === value.date);
                                         });
@@ -149,9 +148,9 @@ console.log('value', value);
                                                 skipHeader: true,
                                                 origin: cellId[0].cell + originCell
                                             });
-                                        if (el.ot_planned !== '') {
+                                        if (el.addtion_hours_planned !== '') {
                                             XLSX.utils.sheet_add_json(ws, [{
-                                                A: el.ot_planned
+                                                A: el.addtion_hours_planned
                                             }], {
                                                     skipHeader: true,
                                                     origin: cellId[0].cell + (originCell + 1)
@@ -159,7 +158,7 @@ console.log('value', value);
                                         }
                                         if (el.ot_unplanned !== '') {
                                             XLSX.utils.sheet_add_json(ws, [{
-                                                A: el.ot_unplanned
+                                                A: el.addtion_hours_unplanned
                                             }], {
                                                     skipHeader: true,
                                                     origin: cellId[0].cell + (originCell + 2)
@@ -193,13 +192,13 @@ console.log('value', value);
                             var wb = XLSX.utils.book_new();
                             var wopts = { bookType: 'xlsx', type: 'buffer' };
                             XLSX.utils.book_append_sheet(wb, ws, req.body.month);
-							var filePath = path.resolve('./app/public/' + "TimeSheet_" + req.body.month + "_" + req.body.year + ".xlsx")
+			   var filePath = path.resolve('./app/public/' + "TimeSheet_" + req.body.month + "_" + req.body.year + ".xlsx")
                             XLSX.writeFile(wb, filePath);
-							setTimeout(function() {
-								if (fs.existsSync(filePath)) {
-									fs.unlinkSync(filePath);
-								}
-							}, 50000);
+				setTimeout(function() {
+					if (fs.existsSync(filePath)) {
+						fs.unlinkSync(filePath);
+					}
+				}, 50000);
                             res.end();
                         }
                     });

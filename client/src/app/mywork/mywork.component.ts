@@ -243,6 +243,9 @@ export class MyworkComponent implements OnInit {
         }));
       }
       currentDate.setDate(currentDate.getDate() + 1);
+      if (currentDate > new Date()) {
+      	break;
+      }
     }
     this.initForm();
     const control = <FormArray>this.timeSheetForm.controls.timesheets;

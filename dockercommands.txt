@@ -27,3 +27,6 @@ https://css-tricks.com/how-to-create-an-ie-only-stylesheet/
     // IE10+ CSS here
 }
 mongod --logpath E:\rathinavel_workspace\MongoDB\logs\mongo.log --dbpath E:\rathinavel_workspace\MongoDB\data\db --directoryperdb --install
+
+sudo mongod --dbpath /var/www/html/workspace/timesheet/mongodb-data/
+
