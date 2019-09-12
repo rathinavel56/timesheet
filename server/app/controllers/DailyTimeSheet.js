@@ -17,7 +17,7 @@ exports.create = function (req, res) {
                         DailyTimeSheet.deleteMany({
                             "date": {
                                 "$gte": startDate.toISOString(),
-                                "$lt": endDate.toISOString()
+                                "$lte": endDate.toISOString()
                             }
                         }, function () {
                             var isSave = false;

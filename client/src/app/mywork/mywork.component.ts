@@ -199,7 +199,7 @@ export class MyworkComponent implements OnInit {
           });
         }
       }
-      const dayName = (this.dailyTimeSheet) ? day + ' ' + monthNames[month] + ' ' +
+      const dayName = (this.dailyTimeSheet) ? day + ' ' + monthNames[(month-1)] + ' ' +
         currentDate.getFullYear() + ' (' + weekday[currentDate.getDay()] + ')' : ' (' + weekday[currentDate.getDay()] + ')';
       if (!this.defaultTimeSheet && timeSheetFilled.length > 0) {
         setWeek.push(this.formBuilder.group({
@@ -259,19 +259,28 @@ export class MyworkComponent implements OnInit {
   getStartEnd(currentDate: Date) {
     
     if (currentDate.getDay() !== 6) {
-    	currentDate.setDate(currentDate.getDate() - (currentDate.getDay() + 1));
+    	currentDate.setDate(currentDate.getDate() - 7);
+    }
+    let dateFirst;
+    for (let i = 0; i < 7; i++) {
+     if (currentDate.getDay() === 6) {
+	dateFirst = currentDate;
+	break;
+     } else {
+	currentDate.setDate(currentDate.getDate() + 1);
+     }
     }
     for (let i = 0; i < 7; i++) {
-      const day = ((currentDate.getDate() < 10) ? '0' + currentDate.getDate() : currentDate.getDate());
-      const month = (currentDate.getMonth() + 1);
-      const formattedDated = currentDate.getFullYear() + '-' + ((month < 10) ? '0' + month : month) + '-' + day;
+      const day = ((dateFirst.getDate() < 10) ? '0' + dateFirst.getDate() : dateFirst.getDate());
+      const month = (dateFirst.getMonth() + 1);
+      const formattedDated = dateFirst.getFullYear() + '-' + ((month < 10) ? '0' + month : month) + '-' + day;
       if (i === 0) {
         this.startDate = formattedDated;
       }
       if (i === 6) {
         this.endDate = formattedDated;
       }
-      currentDate.setDate(currentDate.getDate() + 1);
+      dateFirst.setDate(dateFirst.getDate() + 1);
     }
     this.getTimeSheet(this.startDate, this.endDate);
   }
