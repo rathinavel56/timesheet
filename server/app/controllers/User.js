@@ -154,9 +154,9 @@ exports.register = function (req, res) {
 };
 
 exports.forgotPassword = function (req, res) {
-    try {
+     try {
         if (req.body.token !== "") {
-            change_password_update(req, res, req.body.token, config.statusMessage.forgot_password.successFinal, config.statusMessage.forgot_password.failedFinal);
+            change_password_getId(req, res, req.body.token, config.statusMessage.forgot_password.successFinal, config.statusMessage.forgot_password.failedFinal);
         } else {
             var conditions = {
                 employee_id: { $eq: req.body.employee_id },
@@ -195,7 +195,7 @@ exports.forgotPassword = function (req, res) {
             err: err
         };
         res.status(config.httpCode.internalServerError).json({
-            statusMessage: config.statusMessage.internalServerError + catchError.id,
+            statusMessage: config.statusMessage.internalServerError + catchError.id
         });
     }
 };
@@ -475,7 +475,7 @@ function change_password_getId(req, res, token, successMessage, failMessage) {
 
 function change_password_update(req, res, decodeId, successMessage, failMessage) {
     var condition = {
-        _id: { $eq: decodeId }
+        _id: { $eq: mongoose.Types.ObjectId(decodeId) }
     };
     var updatePassword = bcrypt.hashSync(req.body.password, saltRounds);
     var userUpdate = { $set: { password: updatePassword} };
