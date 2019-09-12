@@ -318,7 +318,9 @@ var MyworkComponent = /** @class */ (function () {
         return setWeek;
     };
     MyworkComponent.prototype.getStartEnd = function (currentDate) {
-        currentDate.setDate(currentDate.getDate() - (currentDate.getDay() + 1));
+        if (currentDate.getDay() !== 6) {
+            currentDate.setDate(currentDate.getDate() - (currentDate.getDay() + 1));
+        }
         for (var i = 0; i < 7; i++) {
             var day = ((currentDate.getDate() < 10) ? '0' + currentDate.getDate() : currentDate.getDate());
             var month = (currentDate.getMonth() + 1);

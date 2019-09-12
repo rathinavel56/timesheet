@@ -257,7 +257,10 @@ export class MyworkComponent implements OnInit {
   }
 
   getStartEnd(currentDate: Date) {
-    currentDate.setDate(currentDate.getDate() - (currentDate.getDay() + 1));
+    
+    if (currentDate.getDay() !== 6) {
+    	currentDate.setDate(currentDate.getDate() - (currentDate.getDay() + 1));
+    }
     for (let i = 0; i < 7; i++) {
       const day = ((currentDate.getDate() < 10) ? '0' + currentDate.getDate() : currentDate.getDate());
       const month = (currentDate.getMonth() + 1);
