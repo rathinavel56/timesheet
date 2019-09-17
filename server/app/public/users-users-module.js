@@ -176,6 +176,7 @@ var UserComponent = /** @class */ (function (_super) {
     };
     UserComponent.prototype.updateFormInit = function () {
         this.updateForm = this.formBuilder.group({
+            employee_id: [''],
             name: ['', _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].required],
             shore_type: ['', _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].required],
             manager_id: ['', _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].required],
@@ -345,6 +346,7 @@ var UserComponent = /** @class */ (function (_super) {
         this.searchFormInit();
     };
     UserComponent.prototype.updateUser = function (user) {
+        this.updateForm.controls['employee_id'].setValue(user.employee_id);
         this.updateForm.controls['name'].setValue(user.name);
         this.updateForm.controls['shore_type'].setValue(user.shore_type);
         this.updateForm.controls['role_id'].setValue(user.role_id);

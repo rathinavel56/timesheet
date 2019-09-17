@@ -64,6 +64,7 @@ export class UserComponent extends AppComponent implements OnInit {
 
   updateFormInit() {
     this.updateForm = this.formBuilder.group({
+      employee_id: [''],	
       name: ['', Validators.required],
       shore_type: ['', Validators.required],
       manager_id: ['', Validators.required],
@@ -226,6 +227,7 @@ export class UserComponent extends AppComponent implements OnInit {
   }
 
   updateUser(user: User) {
+    this.updateForm.controls['employee_id'].setValue(user.employee_id);
     this.updateForm.controls['name'].setValue(user.name);
     this.updateForm.controls['shore_type'].setValue(user.shore_type);
     this.updateForm.controls['role_id'].setValue(user.role_id);

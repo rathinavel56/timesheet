@@ -279,7 +279,7 @@ exports.findAllManagers = function (req, res) {
         if (req.body) {
             User
                 .find({
-                    role_id: { $ne: mongoose.Types.ObjectId(config.roles[1]._id) },
+                    role_id: { $ne: mongoose.Types.ObjectId(config.roles[2]._id) },
                     is_active: { $eq: true }
                 })
                 .select('name _id')
@@ -389,7 +389,8 @@ exports.update = function (req, res) {
             User
                 .findOneAndUpdate(condition, userUpdate, {
                     new: true,
-                    useFindAndModify: false
+                    useFindAndModify: false,
+		    returnNewDocument: true
                 })
                 .exec(function (err, user) {
                     if (err) {
@@ -397,20 +398,29 @@ exports.update = function (req, res) {
                             error: err
                         });
                     } else {
-                        var role = config.roles.filter(function(element) {
-                            return (user.role_id.toString() === element._id.toString());
-                        });
-                        const userData = {
-                            id: user._id,
-                            role: role[0].name,
-                            name: user.name,
-                            employee_id: user.employee_id
-                        };
-                        res.json({
-                            status: config.statusMessage.success,
-                            statusMessage: config.statusMessage.user.updated,
-                            data: userData
-                        });
+			User
+			.findOne(condition)
+			.select('_id name role_id employee_id')
+			.populate('role', '_id name')
+			.exec(function (err, userDetail) {
+				if (err) {
+				        res.status(config.httpCode.internalServerError).json({
+				            error: err
+				        });
+		                } else {
+				    const data = {
+				            id: userDetail._id,
+				            role: userDetail.role[0].name,
+				            name: userDetail.name,
+				            employee_id: userDetail.employee_id
+				        };
+				        res.json({
+				            status: config.statusMessage.success,
+				            statusMessage: config.statusMessage.user.updated,
+				            data: data
+				        });
+				}
+			});                        
                     }
                 });
         } else {
