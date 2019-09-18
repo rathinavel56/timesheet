@@ -280,7 +280,7 @@ exports.findAllManagers = function (req, res) {
             User
                 .find({
                     role_id: { $ne: mongoose.Types.ObjectId(config.roles[2]._id) },
-                    is_active: { $eq: true }
+                    is_active: { $eq: false }
                 })
                 .select('name _id')
                 .exec(function (err, users) {

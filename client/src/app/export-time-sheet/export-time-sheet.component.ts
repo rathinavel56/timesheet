@@ -40,7 +40,7 @@ export class ExportTimeSheetComponent {
       const lastDay = new Date(this.startYear, this.startMonth + 1, 0);
       let day = ((firstDay.getDate() < 10) ? '0' + firstDay.getDate() : firstDay.getDate());
       let month = firstDay.getMonth();
-	  let monthName = this.monthNames[month];
+	  let monthName = this.monthNames[(month-1)];
       let formattedStartDated = firstDay.getFullYear() + '-' + ((month < 10) ? '0' + month : month) + '-' + day;
       day = ((lastDay.getDate() < 10) ? '0' + lastDay.getDate() : lastDay.getDate());
       month = lastDay.getMonth();
