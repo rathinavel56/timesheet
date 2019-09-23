@@ -37,13 +37,13 @@ export class ExportTimeSheetComponent {
         return;
       }
       const firstDay = new Date(this.startYear, this.startMonth, 1);
-      const lastDay = new Date(this.startYear, this.startMonth + 1, 0);
+      const lastDay = new Date(this.startYear, this.startMonth, 0);
       let day = ((firstDay.getDate() < 10) ? '0' + firstDay.getDate() : firstDay.getDate());
       let month = firstDay.getMonth();
 	  let monthName = this.monthNames[(month-1)];
       let formattedStartDated = firstDay.getFullYear() + '-' + ((month < 10) ? '0' + month : month) + '-' + day;
       day = ((lastDay.getDate() < 10) ? '0' + lastDay.getDate() : lastDay.getDate());
-      month = lastDay.getMonth();
+      month = lastDay.getMonth() + 1;
       let formattedEndDated = lastDay.getFullYear() + '-' + ((month < 10) ? '0' + month : month) + '-' + day;
       const exportDate = {
         start: formattedStartDated,
